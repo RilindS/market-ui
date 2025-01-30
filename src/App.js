@@ -1,78 +1,25 @@
-import React from 'react';
-import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminProducts from './pages/admin/AdminProducts';
-import AdminSidebar from './pages/admin/AdminSidebar'; // Import the AdminSidebar component
-import LoginRegisterPage from './pages/authentication/LoginAndRegisterPage';
-import UserPage from './pages/user/UserPage';
+import React from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import AdminLayout from "./layouts/AdminLayout";
+import UserLayout from "./layouts/UserLayout";
 
+import LoginRegisterPage from "./pages/authentication/LoginAndRegisterPage";
+import Unauthorized from "./pages/authentication/Unauthorized";
 
-const getRoleFromToken = () => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1])); // Decode the JWT token
-      return payload.role; // Extract the role
-    } catch (error) {
-      console.error('Failed to decode token:', error);
-      return null;
-    }
-  }
-  return null;
-};
-
-const PrivateRoute = ({ children, allowedRole }) => {
-  const role = getRoleFromToken();
-
-  if (!role) {
-    return <Navigate to="/" />; // Redirect to login if no role is found
-  }
-  if (role !== allowedRole) {
-    return <Navigate to="/" />; // Redirect if the role doesn't match
-  }
-  return children; // Render the component if role matches
-};
-
-const AdminLayout = ({ children }) => {
-  return (
-    <div className="admin-layout">
-      <AdminSidebar />
-      <div className="admin-content">{children}</div>
-    </div>
-  );
-};
+import PrivateRoute from "./routes/PrivateRoute";
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Public route */}
+        <Route path="/login" element={<LoginRegisterPage />} />
         <Route path="/" element={<LoginRegisterPage />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* Admin routes */}
-        <Route
-          path="/admin/*"
-          element={
-            <PrivateRoute allowedRole="ADMIN">
-              <AdminLayout>
-                <Routes>
-                  <Route path="dashboard" element={<AdminDashboard />} />
-                  <Route path="products" element={<AdminProducts />} />
-                </Routes>
-              </AdminLayout>
-            </PrivateRoute>
-          }
-        />
-
-        {/* User routes */}
-        <Route
-          path="/user/page"
-          element={
-            <PrivateRoute allowedRole="USER">
-              <UserPage />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/admin/*" element={<PrivateRoute roles={['ADMIN']} component={AdminLayout} />} />
+        <Route path="/user/*" element={<PrivateRoute roles={['USER']} component={UserLayout} />} />
+        {/* <Route path="/patient/*" element={<PrivateRoute roles={['PATIENT']} component={PatientLayout} />} />
+        <Route path="/nurse/*" element={<PrivateRoute roles={['NURSE']} component={NurseLayout} />} /> */}
       </Routes>
     </Router>
   );
