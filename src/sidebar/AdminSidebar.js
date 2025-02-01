@@ -1,7 +1,7 @@
 import {
-    faEnvelope,
-    faSignOutAlt,
-    faTachometerAlt
+  faEnvelope,
+  faSignOutAlt,
+  faTachometerAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
@@ -26,11 +26,15 @@ const AdminSidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/admin/email">
-            <FontAwesomeIcon icon={faEnvelope} /> Send Email
+          <Link to="/admin/products">
+            <FontAwesomeIcon icon={faEnvelope} /> Manage Products
           </Link>
         </li>
-        
+        <li>
+          <Link to="/admin/suppliers">
+            <FontAwesomeIcon icon={faTachometerAlt} /> Furnizuesit
+          </Link>
+        </li>
         <li>
           <Link to="/" onClick={handleLogout}>
             <FontAwesomeIcon icon={faSignOutAlt} /> Log Out

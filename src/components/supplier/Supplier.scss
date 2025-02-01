@@ -1,0 +1,28 @@
+// src/pages/Supplier/Supplier.scss
+.supplier-container {
+    width: 50%;
+    margin: auto;
+    text-align: center;
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+  
+    button {
+      margin: 5px;
+      padding: 8px;
+      cursor: pointer;
+    }
+  
+    .delete-btn {
+      background-color: red;
+      color: white;
+    }
+  }
+  

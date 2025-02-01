@@ -1,0 +1,70 @@
+// ProduktForm.module.scss
+
+$form-bg: #f8f9fa;
+$input-border: #ccc;
+$primary-color: #007bff;
+$primary-hover: darken($primary-color, 10%);
+$shadow-color: rgba(0, 0, 0, 0.1);
+
+.product-form {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  background: $form-bg;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px $shadow-color;
+
+  label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid $input-border;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border 0.3s ease;
+
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+    }
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+
+    input {
+      width: auto;
+      margin-right: 8px;
+    }
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: $primary-color;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background-color: $primary-hover;
+    }
+  }
+}
