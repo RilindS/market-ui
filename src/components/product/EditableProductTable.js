@@ -113,18 +113,19 @@ const EditableProductTable = () => {
                 />
               </td>
               <td>
-                <select
-                  value={product.supplier?.id || ""}
-                  onChange={(e) => handleEdit(product.id, "supplierId", e.target.value)}
-                >
-                  <option value="" disabled>Select Supplier</option>
-                  {suppliers.map((supplier) => (
-                    <option key={supplier.id} value={supplier.id}>
-                      {supplier.name}
-                    </option>
-                  ))}
-                </select>
-              </td>
+  <select
+    value={product.supplierName || ""} 
+    onChange={(e) => handleEdit(product.id, "supplierName", e.target.value)}
+  >
+    <option value="" disabled>Zgjedh Furnitorin</option>
+    {suppliers.map((supplier) => (
+      <option key={supplier.id} value={supplier.name}>
+        {supplier.name}
+      </option>
+    ))}
+  </select>
+</td>
+
               <td>
                 <input
                   type="checkbox"
