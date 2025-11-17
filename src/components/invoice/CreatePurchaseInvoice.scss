@@ -1,0 +1,157 @@
+.invoice-form-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #1e1e2f;
+  color: #f1f1f1;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #00d1b2;
+  }
+
+  h3 {
+    margin-top: 2rem;
+    color: #82cfff;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  input,
+  select {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #2a2a3d;
+    color: #f1f1f1;
+
+    &:focus {
+      outline: none;
+      border-color: #00d1b2;
+    }
+  }
+
+  .invoice-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+
+    th,
+    td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+
+    th {
+      background: #2b2b44;
+      color: #b3e5fc;
+    }
+
+    .total-col {
+      text-align: right;
+      font-weight: bold;
+      color: #00d1b2;
+    }
+
+    input {
+      width: 100%;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #ff6b6b;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: 0.2s;
+
+      &:hover {
+        color: #ff3b3b;
+      }
+    }
+  }
+
+  .add-item-btn {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: background 0.3s;
+
+    &:hover {
+      background: #0069d9;
+    }
+  }
+
+  .total-section {
+    text-align: right;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: #00d1b2;
+  }
+
+  .submit-btn {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(90deg, #0072ff, #00c6ff);
+    }
+  }
+
+  .search-dropdown {
+    position: absolute;
+    z-index: 100;
+    background: #2a2a3d;
+    border: 1px solid #444;
+    border-radius: 6px;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 0.2rem;
+
+    li {
+      padding: 0.6rem;
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+
+      &:hover {
+        background: #38385a;
+      }
+
+      .price {
+        color: #00d1b2;
+      }
+    }
+  }
+}

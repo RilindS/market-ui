@@ -31,7 +31,7 @@ const SupplierList = () => {
   return (
     <div className="supplier-container">
       <h2>Supplier List</h2>
-      <button onClick={() => navigate("create-suppliers")}>+ Add Supplier</button>
+      <button onClick={() => navigate("create-supplier")}>+ Add Supplier</button>
 
       <table>
         <thead>

@@ -1,5 +1,5 @@
 // src/pages/Supplier/EditSupplier.js
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getSupplierById, updateSupplier } from "../../services/request/supplierService";
 import "./Supplier.scss";
