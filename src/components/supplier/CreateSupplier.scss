@@ -1,0 +1,78 @@
+// .supplier-container {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   padding: 40px;
+//   background: #f5f6fa;
+//   min-height: 100vh;
+// }
+
+.supplier-card {
+  background: white;
+  width: 420px;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: 0.2s ease-in-out;
+}
+
+.supplier-card:hover {
+  transform: translateY(-3px);
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.supplier-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-field {
+  padding: 12px 15px;
+  border: 1.5px solid #dcdcdc;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: border 0.2s;
+}
+
+.input-field:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.btn-create {
+  padding: 12px;
+  border: none;
+  background: #4a90e2;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 10px;
+}
+
+.btn-create:hover {
+  background: #357abd;
+}
+
+.btn-cancel {
+  padding: 12px;
+  border: none;
+  background: #d9534f;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #c9302c;
+}

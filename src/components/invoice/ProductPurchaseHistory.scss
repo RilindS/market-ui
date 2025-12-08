@@ -1,0 +1,56 @@
+.product-history-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #1e1e2f;
+  color: white;
+  border-radius: 10px;
+
+  .search-input {
+    width: 100%;
+    padding: 10px;
+    background: #2b2b3f;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  .search-results {
+    background: #2b2b3f;
+    border-radius: 5px;
+    border: 1px solid #444;
+
+    li {
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+
+      &:hover {
+        background: #3a3a5a;
+      }
+    }
+  }
+
+  .history-card {
+    margin-top: 20px;
+    background: #2b2b3f;
+    padding: 20px;
+    border-radius: 10px;
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th, td {
+        padding: 10px;
+        border: 1px solid #444;
+      }
+
+      th {
+        background: #3b3b5e;
+      }
+    }
+  }
+}

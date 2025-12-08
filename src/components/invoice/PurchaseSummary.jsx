@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getPurchasesSummary } from "../../services/request/invoiceService";
 import "./PurchaseSummary.scss"; // ✅ Import SCSS
 
@@ -8,6 +9,11 @@ const PurchaseSummary = () => {
   );
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+   const openHistory = (productId) => {
+    navigate(`/admin/product-history/${productId}`);
+  };
 
   const fetchSummary = async (date) => {
     setLoading(true);
@@ -65,6 +71,8 @@ const PurchaseSummary = () => {
                         <th>Produkt</th>
                         <th>Sasia</th>
                         <th>Totali</th>
+                        <th>Historia</th>
+
                       </tr>
                     </thead>
                     <tbody>
@@ -73,6 +81,12 @@ const PurchaseSummary = () => {
                           <td>{item.productName}</td>
                           <td>{item.quantity}</td>
                           <td>{item.totalPrice.toFixed(2)} €</td>
+                          <td
+                          className="clickable-product"
+                          onClick={() => openHistory(item.productId)}
+                        >
+                          Shiqo historin
+                        </td>
                         </tr>
                       ))}
                     </tbody>

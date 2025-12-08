@@ -44,7 +44,7 @@ const AdminSidebar = () => {
         </li>
         <li>
           <Link to="/admin/order/create">
-            <FontAwesomeIcon icon={faTachometerAlt} /> Orderi
+            <FontAwesomeIcon icon={faTachometerAlt} /> Krijo Porosi
           </Link>
         </li>
 
@@ -67,9 +67,42 @@ const AdminSidebar = () => {
 
          <li>
           <Link to="/admin/purchase/summary">
-            <FontAwesomeIcon icon={faTachometerAlt} /> shiko blerjet
+            <FontAwesomeIcon icon={faTachometerAlt} /> Shiko blerjet
           </Link>
         </li>
+        <li>
+          <Link to="/admin/reports">
+            <FontAwesomeIcon icon={faTachometerAlt} /> Shiko detajet e shitjeve
+          </Link>
+        </li>
+        <li>
+          <Link to="/admin/debt-managment">
+            <FontAwesomeIcon icon={faTachometerAlt} /> Borgjet
+          </Link>
+        </li>
+        <li>
+          <Link to="/admin/clients">
+            <FontAwesomeIcon icon={faTachometerAlt} /> Klientat
+          </Link>
+        </li>
+        <li>
+          <Link to="/admin/end-day">
+            <FontAwesomeIcon icon={faTachometerAlt} /> Përfundo Diten
+          </Link>
+        </li>
+           <li>
+          <Link to="/admin/product-stats">
+            <FontAwesomeIcon icon={faTachometerAlt} /> Stoqet
+          </Link>
+        </li>
+
+        <li>
+          <Link to="/admin/product-history">
+            <FontAwesomeIcon icon={faTachometerAlt} /> Historia e Produkteve
+          </Link>
+        </li>
+       
+        
         <li>
           <Link to="#" onClick={handleLogout}>
             <FontAwesomeIcon icon={faSignOutAlt} /> Log Out

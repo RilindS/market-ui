@@ -101,6 +101,15 @@
         td {
           text-align: left;
         }
+        .clickable-product {
+          cursor: pointer;
+          color: #00d1b2;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
       }
     }
   }

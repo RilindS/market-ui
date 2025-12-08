@@ -2,9 +2,11 @@
 import api from "../axios";
 
 // Merr të gjithë furnizuesit
-export const getAllSuppliers = async () => {
+export const getAllSuppliers = async (search = "") => {
   try {
-    const response = await api.get("/supplier");
+    const response = await api.get(`/supplier`, {
+      params: { search }
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching suppliers:", error);
@@ -12,6 +14,15 @@ export const getAllSuppliers = async () => {
   }
 };
 
+export const getProductsBySupplier = async (supplierId) => {
+  try {
+    const response = await api.get(`/product/supplier/${supplierId}/products`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products for supplier:", error);
+    throw error;
+  }
+};
 // Merr një furnizues sipas ID-së
 export const getSupplierById = async (id) => {
   try {

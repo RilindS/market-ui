@@ -1,28 +1,106 @@
-// src/pages/Supplier/Supplier.scss
 .supplier-container {
-    width: 50%;
-    margin: auto;
-    text-align: center;
-  
-    table {
-      width: 100%;
-      border-collapse: collapse;
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 15px;
+  }
+
+  button {
+    margin-right: 8px;
+    padding: 6px 14px;
+    background: #3a7bd5;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background: #2f68b0;
     }
-  
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
+
+    &.delete-btn {
+      background: #d9534f;
+
+      &:hover {
+        background: #c9302c;
+      }
     }
-  
-    button {
-      margin: 5px;
-      padding: 8px;
-      cursor: pointer;
-    }
-  
-    .delete-btn {
-      background-color: red;
-      color: white;
+
+    &.close-btn {
+      background: #6c757d;
+
+      &:hover {
+        background: #565e64;
+      }
     }
   }
-  
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #dddddd;
+      text-align: left;
+    }
+
+    th {
+      background: #f4f4f4;
+    }
+
+    tr:hover {
+      background: #fafafa;
+    }
+  }
+}
+
+.inner-product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #fdfdfd;
+  border: 1px solid #ddd;
+
+  th, td {
+    padding: 8px;
+    border-bottom: 1px solid #e2e2e2;
+  }
+
+  th {
+    background: #efefef;
+    font-size: 14px;
+  }
+
+  tr:hover {
+    background: #f7f7f7;
+  }
+}
+
+.product-section {
+  background: #f9fbff;
+  padding: 15px;
+  border: 1px solid #dbe4f0;
+  border-radius: 6px;
+  margin-top: 10px;
+
+  h4 {
+    margin-bottom: 10px;
+  }
+}
+.search-input {
+  padding: 8px 12px;
+  width: 250px;
+  border: 1px solid #cbd3da;
+  border-radius: 4px;
+  margin-right: 10px;
+  margin-bottom: 12px;
+
+  &:focus {
+    outline: none;
+    border-color: #3a7bd5;
+    box-shadow: 0px 0px 4px rgba(58, 123, 213, 0.4);
+  }
+}
+

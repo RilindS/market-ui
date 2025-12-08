@@ -22,3 +22,8 @@ export const getPurchasesSummary = async (date) => {
     throw error;
   }
 };
+
+export const getProductHistory = async (productId) => {
+  const res = await api.get(`/invoices/products/${productId}/history`);
+  return res.data;
+};
