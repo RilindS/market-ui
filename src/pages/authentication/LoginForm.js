@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../services/auth/auth';
 
@@ -29,6 +29,8 @@ const LoginForm = () => {
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const decodedPayload = JSON.parse(atob(base64));
         const userRole = decodedPayload.role;
+        const userId = decodedPayload.userId;
+        localStorage.setItem('userId', userId)
   
         if (userRole === 'ADMIN') {
           navigate('/admin/dashboard');

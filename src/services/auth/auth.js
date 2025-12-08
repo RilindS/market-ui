@@ -21,3 +21,12 @@ export const loginUser = async (loginData) => {
     throw error;
   }
 };
+export const fetchUsers = async (page = 1, size = 50) => {
+  try {
+    const response = await api.get(`/user/allUsers?page=${page}&size=${size}`);
+    return response.data.data.data; 
+  } catch (error) {
+    console.error("Gabim gjatë marrjes së userave:", error);
+    throw error;
+  }
+};

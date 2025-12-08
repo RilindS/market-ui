@@ -1,0 +1,42 @@
+.client-container {
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  .add-btn {
+    margin-bottom: 15px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .delete-btn {
+      background: red;
+      color: white;
+    }
+  }
+}
+
+.client-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+
+  button {
+    padding: 10px;
+  }
+}
