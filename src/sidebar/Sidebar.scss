@@ -39,3 +39,62 @@
     }
   }
   
+  .sidebar {
+  width: 230px;
+  background: #060684;
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px 10px;
+  transition: width 0.3s ease;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 50px;
+}
+
+.sidebar ul li {
+  margin: 15px 0;
+}
+
+.sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  white-space: nowrap;
+  transition: 0.2s;
+}
+
+.sidebar ul li a:hover {
+  color: #4ca3ff;
+}
+
+/* --- Hamburger Button --- */
+.sidebar-toggle-btn {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  background: #1e1e2d;
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  z-index: 999;
+}
+
+.sidebar-toggle-btn:hover {
+  background: #3535c5;
+}

@@ -1,14 +1,27 @@
 import {
-    faSignOutAlt,
-    faTachometerAlt
+  faBars,
+  faBox,
+  faCalendarCheck,
+  faCartPlus,
+  faClock,
+  faFileInvoiceDollar,
+  faHistory,
+  faMoneyBillWave,
+  faShoppingBag,
+  faSignOutAlt,
+  faTruck,
+  faUserFriends,
+  faWarehouse
 } from "@fortawesome/free-solid-svg-icons";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Sidebar.scss";
 
 const UserSidebar = () => {
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false); // ⚠️ SHTUAR
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -17,20 +30,101 @@ const UserSidebar = () => {
   };
 
   return (
-    <div className="sidebar">
-      <ul>
-        <li>
-          <Link to="/user/dashboard">
-            <FontAwesomeIcon icon={faTachometerAlt} /> Dashboard
-          </Link>
-        </li>
-         <li>
-            <Link to="/" onClick={handleLogout}>
-                <FontAwesomeIcon icon={faSignOutAlt} /> Log Out
+    <>
+      {/* --- Hamburger Button --- */}
+      <button className="sidebar-toggle-btn" onClick={() => setCollapsed(!collapsed)}>
+        <FontAwesomeIcon icon={faBars} />
+      </button>
+
+      {/* --- Sidebar --- */}
+      <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+        <ul>
+          <li>
+            <Link to="/user/products">
+              <FontAwesomeIcon icon={faBox} />
+              {!collapsed && " Manage Products"}
             </Link>
-             </li>
-      </ul>
-    </div>
+          </li>
+
+          <li>
+            <Link to="/user/suppliers">
+              <FontAwesomeIcon icon={faTruck} />
+              {!collapsed && " Furnizuesit"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/order/create">
+              <FontAwesomeIcon icon={faCartPlus} />
+              {!collapsed && " Krijo Porosi"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/my-work-times">
+              <FontAwesomeIcon icon={faClock} />
+              {!collapsed && " Oret e mia"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/invoice/create">
+              <FontAwesomeIcon icon={faFileInvoiceDollar} />
+              {!collapsed && " Regjistro Fature"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/purchase/summary">
+              <FontAwesomeIcon icon={faShoppingBag} />
+              {!collapsed && " Shiko Blerjet"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/debt-managment">
+              <FontAwesomeIcon icon={faMoneyBillWave} />
+              {!collapsed && " Borgjet"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/clients">
+              <FontAwesomeIcon icon={faUserFriends} />
+              {!collapsed && " Klientat"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/end-day">
+              <FontAwesomeIcon icon={faCalendarCheck} />
+              {!collapsed && " Përfundo Ditën"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/product-stats">
+              <FontAwesomeIcon icon={faWarehouse} />
+              {!collapsed && " Stoqet"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/user/product-history">
+              <FontAwesomeIcon icon={faHistory} />
+              {!collapsed && " Historia e Produkteve"}
+            </Link>
+          </li>
+
+          <li>
+            <Link to="#" onClick={handleLogout}>
+              <FontAwesomeIcon icon={faSignOutAlt} />
+              {!collapsed && " Log Out"}
+            </Link>
+          </li>
+        </ul>
+      </div>
+    </>
   );
 };
 

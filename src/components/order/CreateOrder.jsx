@@ -443,7 +443,6 @@ const updateQuantity = (id, inputValue) => {
         )}
       </div>
 
-      {/* Butonat: Ekzistuesi + i ri */}
       <div className="order-buttons" style={{ display: "flex", gap: "10px", justifyContent: "center", marginTop: "20px" }}>
         <button
           onClick={handleCreateOrder}
@@ -457,13 +456,12 @@ const updateQuantity = (id, inputValue) => {
           onClick={handleSaveAsCredit}
           disabled={items.length === 0}
           className="credit-order-btn" // Shto stil në SCSS nëse do
-          style={{ flex: 1, maxWidth: "200px", backgroundColor: "#ff9800", color: "white" }}
+          style={{ flex: 1, maxWidth: "200px", marginTop:"50px",backgroundColor: "#ff9800", color: "white" }}
         >
           Ruaj si Borgj
         </button>
       </div>
 
-      {/* Modal për zgjedhje klient */}
       {showModal && (
         <div className="modal-overlay" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div className="modal-content" style={{ background: "white", padding: "30px", borderRadius: "10px", width: "400px", maxHeight: "80vh", overflowY: "auto" }}>
