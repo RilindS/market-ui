@@ -1,0 +1,54 @@
+.worktime-container {
+  max-width: 450px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  margin: 40px auto;
+  text-align: center;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #333;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  input[type="date"] {
+    padding: 8px 12px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+
+  button {
+    padding: 8px 15px;
+    font-size: 15px;
+    background: #1e90ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+
+    &:hover {
+      background: #187bdb;
+    }
+  }
+}
+
+.result {
+  margin-top: 15px;
+  padding: 10px;
+  font-size: 18px;
+  background: #f5faff;
+  border-left: 4px solid #1e90ff;
+  border-radius: 5px;
+  color: #333;
+}
