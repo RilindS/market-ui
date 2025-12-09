@@ -8,24 +8,27 @@ const EditableProductTable = () => {
   const [search, setSearch] = useState("");
   const [notification, setNotification] = useState("");
 
+  // Trigger për refresh lokal pas krijimit
+  const [refresh, setRefresh] = useState(false);
 
   // State për rreshtin e krijimit
   const [newProduct, setNewProduct] = useState({
-  barcode: "",
-  name: "",
-  price: "",
-  description: "",
-  stockQuantity: "",
-  category: "",
-  supplierId: "",   // ← e re
-  active: true,
-});
-const showNotification = (msg) => {
-  setNotification(msg);
-  setTimeout(() => {
-    setNotification("");
-  }, 2500);
-};
+    barcode: "",
+    name: "",
+    price: "",
+    description: "",
+    stockQuantity: "",
+    category: "",
+    supplierId: "",
+    active: true,
+  });
+
+  const showNotification = (msg) => {
+    setNotification(msg);
+    setTimeout(() => {
+      setNotification("");
+    }, 2500);
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -49,7 +52,7 @@ const showNotification = (msg) => {
       }
     }
     fetchData();
-  }, [search]);
+  }, [search, refresh]);
 
   const handleEdit = async (id, field, value) => {
     const updatedProducts = products.map((product) =>
@@ -65,55 +68,52 @@ const showNotification = (msg) => {
   };
 
   const handleCreate = async () => {
-  try {
-    const created = await createProduct(newProduct);
+    try {
+      const created = await createProduct(newProduct);
 
-    // Shto produktin lokalisht
-    setProducts([created, ...products]);
+      // Shto produktin lokalisht
+      setProducts([created, ...products]);
 
-    // Pastro input-at
-    setNewProduct({
-      barcode: "",
-      name: "",
-      price: "",
-      description: "",
-      stockQuantity: "",
-      category: "",
-      supplierId: "",
-      active: true,
-    });
+      // Pastro input-at
+      setNewProduct({
+        barcode: "",
+        name: "",
+        price: "",
+        description: "",
+        stockQuantity: "",
+        category: "",
+        supplierId: "",
+        active: true,
+      });
 
-    showNotification("Produkti u krijua me sukses!");
+      showNotification("Produkti u krijua me sukses!");
 
-    // Bëj refresh pas 1 sekonde
-    setTimeout(() => {
-      window.location.reload();
-    }, 600);
+      // Rifresko tabelën pa reload të faqes
+      setRefresh((prev) => !prev);
 
-  } catch (error) {
-    console.error("Error creating product:", error);
-    showNotification("Gabim gjatë krijimit të produktit!");
-  }
-};
+    } catch (error) {
+      console.error("Error creating product:", error);
+      showNotification("Gabim gjatë krijimit të produktit!");
+    }
+  };
 
   return (
-    
     <div>
       {notification && (
-  <div
-    style={{
-      background: "#4caf50",
-      padding: "10px",
-      color: "white",
-      marginBottom: "10px",
-      borderRadius: "5px",
-      textAlign: "center",
-      fontWeight: "bold",
-    }}
-  >
-    {notification}
-  </div>
-)}
+        <div
+          style={{
+            background: "#4caf50",
+            padding: "10px",
+            color: "white",
+            marginBottom: "10px",
+            borderRadius: "5px",
+            textAlign: "center",
+            fontWeight: "bold",
+          }}
+        >
+          {notification}
+        </div>
+      )}
 
       {/* Input për search */}
       <input
@@ -131,7 +131,6 @@ const showNotification = (msg) => {
             <th>Price (€)</th>
             <th>Description</th>
             <th>Stock</th>
-            {/* <th>Category</th> */}
             <th>Supplier</th>
             <th>Active</th>
             <th>Create</th>
@@ -176,27 +175,19 @@ const showNotification = (msg) => {
                 onChange={(e) => setNewProduct({ ...newProduct, stockQuantity: e.target.value })}
               />
             </td>
-            {/* <td>
-              <input
-                type="text"
-                value={newProduct.category}
-                onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-              />
-            </td> */}
 
             <td>
               <select
-  value={newProduct.supplierId}
-  onChange={(e) => setNewProduct({ ...newProduct, supplierId: Number(e.target.value) })}
->
-  <option value="">Zgjedh Furnitorin</option>
-  {suppliers.map((supplier) => (
-    <option key={supplier.id} value={supplier.id}>
-      {supplier.name}
-    </option>
-  ))}
-</select>
-
+                value={newProduct.supplierId}
+                onChange={(e) => setNewProduct({ ...newProduct, supplierId: Number(e.target.value) })}
+              >
+                <option value="">Zgjedh Furnitorin</option>
+                {suppliers.map((supplier) => (
+                  <option key={supplier.id} value={supplier.id}>
+                    {supplier.name}
+                  </option>
+                ))}
+              </select>
             </td>
 
             <td>
@@ -255,27 +246,21 @@ const showNotification = (msg) => {
                 />
               </td>
 
-              {/* <td>
-                <input
-                  type="text"
-                  value={product.category}
-                  onChange={(e) => handleEdit(product.id, "category", e.target.value)}
-                />
-              </td> */}
-
               <td>
-              <select
-                value={product.supplierId || ""} 
-                onChange={(e) => handleEdit(product.id, "supplierId", Number(e.target.value))}
-              >
-                <option value="" disabled>Zgjedh Furnitorin</option>
-                {suppliers.map((supplier) => (
-                  <option key={supplier.id} value={supplier.id}>
-                    {supplier.name}
+                <select
+                  value={product.supplierId || ""}
+                  onChange={(e) => handleEdit(product.id, "supplierId", Number(e.target.value))}
+                >
+                  <option value="" disabled>
+                    Zgjedh Furnitorin
                   </option>
-                ))}
-              </select>
-            </td>
+                  {suppliers.map((supplier) => (
+                    <option key={supplier.id} value={supplier.id}>
+                      {supplier.name}
+                    </option>
+                  ))}
+                </select>
+              </td>
 
               <td>
                 <input

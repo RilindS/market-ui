@@ -3,6 +3,7 @@ import CreateClient from "../components/client/CreateClient.jsx";
 import DebtManagement from "../components/client/DebtManagement.jsx";
 import EditClient from "../components/client/EditClient.jsx";
 import CashPage from "../components/dailyCashRecord/CashPage.js";
+import CashRecordsPage from "../components/dailyCashRecord/CashRecordsPage.jsx";
 import CreatePurchaseInvoice from "../components/invoice/CreatePurchaseInvoice";
 import ProductPurchaseHistory from "../components/invoice/ProductPurchaseHistory";
 import PurchaseSummary from "../components/invoice/PurchaseSummary";
@@ -47,6 +48,8 @@ export const AdminRoutes = [
      { path: "/debt-managment", element: <DebtManagement /> },
      { path: "/product-stats", element: <ProductStats /> },
         //{ path: "/product-stats", element: <ProductStats /> },
+        { path: "/cash-record", element: <CashRecordsPage /> },
+
 
 
 

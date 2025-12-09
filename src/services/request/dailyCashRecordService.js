@@ -57,3 +57,12 @@ export const getOpeningBalance = async () => {
     throw error;
   }
 };
+export async function getCashRecords(page = 0, size = 30, year, month) {
+    const params = new URLSearchParams({ page, size });
+
+    if (year) params.append("year", year);
+    if (month) params.append("month", month);
+
+    const response = await api.get(`/cash/records?${params.toString()}`);
+    return response.data;
+}

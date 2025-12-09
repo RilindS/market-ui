@@ -149,6 +149,12 @@ const AdminSidebar = () => {
               {!collapsed && " Log Out"}
             </Link>
           </li>
+          <li>
+            <Link to="/admin/cash-record">
+              <FontAwesomeIcon icon={faChartLine} />
+              {!collapsed && "Hyrjet / Dalje"}
+            </Link>
+          </li>
         </ul>
       </div>
     </>
