@@ -71,10 +71,10 @@ const SupplierList = () => {
 
   const searchProducts = async (term) => {
     try {
-      const data = await getAllProducts(term);
-
+const data = await getAllProducts(term);
+const productsList = data.content;
       // Filter only products belonging to selected supplier
-      const filtered = data.filter(
+      const filtered = productsList.filter(
         (p) => p.supplierId === selectedSupplierId
       );
 
@@ -86,7 +86,7 @@ const SupplierList = () => {
 
   return (
     <div className="supplier-container">
-      <h2>Supplier List</h2>
+      <h2>Lista e Furnizuesve</h2>
 
       {/* SUPPLIER SEARCH */}
       <input
@@ -139,7 +139,7 @@ const SupplierList = () => {
                 <tr>
                   <td colSpan="4">
                     <div className="product-section">
-                      <h4>Products for Supplier: {sup.name}</h4>
+                      <h4>Produktet e Furnisuesit: {sup.name}</h4>
 
                       <button
                         className="close-btn"

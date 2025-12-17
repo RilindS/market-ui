@@ -188,7 +188,7 @@ const updateQuantity = (id, inputValue) => {
       if (manualSearch.trim().length > 1 && !/^\d+$/.test(manualSearch)) {
         try {
           const results = await getAllProducts(manualSearch);
-          setSearchResults(results || []);
+          setSearchResults(results.content || results || []);
         } catch {
           setSearchResults([]);
         }

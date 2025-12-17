@@ -1,10 +1,10 @@
 // src/components/debt/DebtManagement.jsx
 import { useEffect, useState } from 'react';
 import api from '../../services/axios'; // Importo axios instance (si në shembujt e tu)
-import { getAllClients, getClientDebt1, getClientPayments, getTotalDebts } from '../../services/request/clientService'; // Import services
+import { getAllClients, getClientDebt1, getClientPayments } from '../../services/request/clientService'; // Import services
 
 const DebtManagement = () => {
-  const [totalDebts, setTotalDebts] = useState(0);
+  //const [totalDebts, setTotalDebts] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -177,9 +177,10 @@ const DebtManagement = () => {
           <div style={{ marginBottom: '10px' }}>
             <strong>Total i Paguar:</strong> {totalPaid.toFixed(2)} €
           </div>
-          <div style={{ marginBottom: '10px' }}>
-            <strong>Borxhi i Mbetur:</strong> <span style={{ color: 'red' }}>{clientDebt.toFixed(2)} €</span>
-          </div>
+          <div style={{ marginBottom: '20px', fontSize: '20px', fontWeight: 'bold' }}>
+  <strong>Borxhi i Mbetur:</strong> <span style={{ color: 'red', fontSize: '22px' }}>{clientDebt.toFixed(2)} €</span>
+</div>
+
           <button 
             onClick={() => setShowPayModal(true)} 
             disabled={clientDebt <= 0}

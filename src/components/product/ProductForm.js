@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createProduct, updateProduct } from "../../services/request/productService";
 import { getAllSuppliers } from "../../services/request/supplierService";
 import styles from "./ProductForm.module.scss"; // Importo SCSS
-
-const CATEGORIES = ["DETERGJENTA", "USHQIMORE", "BUJQESORE"];
 
 const ProductForm = ({ initialData = null, isEditMode = false, onSuccess }) => {
   const [product, setProduct] = useState({
@@ -89,7 +87,7 @@ const ProductForm = ({ initialData = null, isEditMode = false, onSuccess }) => {
       <label>Stock Quantity:</label>
       <input type="number" name="stockQuantity" value={product.stockQuantity} onChange={handleChange} required />
 
-      <label>Category:</label>
+      {/* <label>Category:</label>
       <select name="category" value={product.category} onChange={handleChange} required>
         <option value="">Select Category</option>
         {CATEGORIES.map((cat) => (
@@ -97,10 +95,10 @@ const ProductForm = ({ initialData = null, isEditMode = false, onSuccess }) => {
             {cat}
           </option>
         ))}
-      </select>
-
+      </select> */}
+{/* 
       <label>Image URL:</label>
-      <input type="text" name="imageUrl" value={product.imageUrl} onChange={handleChange} />
+      <input type="text" name="imageUrl" value={product.imageUrl} onChange={handleChange} /> */}
 
       <div className={styles["checkbox-container"]}>
         <input type="checkbox" name="active" checked={product.active} onChange={handleChange} />

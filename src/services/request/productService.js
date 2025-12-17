@@ -37,15 +37,13 @@ export async function getProductByBarcode(barcode) {
   }
 }
 
+// ... (other imports)
 
-export const getAllProducts = async (search = "") => {
-  try {
-    const response = await api.get("/product/products", { params: { search } }); // Pass search as query param
-    return response.data;
-  } catch (error) {
-    console.error("Get all products error:", error);
-    throw error;
-  }
+export const getAllProducts = async (search = "", page = 0, size = 20) => {
+  const params = new URLSearchParams({ page, size });
+  if (search) params.append('search', search);
+  const response = await api.get(`/product/products?${params.toString()}`);
+  return response.data;  // Kthen Page object: {content: [...], totalElements: num, etc.}
 };
 
 export const updateProduct = async (id, productData) => {

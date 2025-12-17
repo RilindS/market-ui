@@ -28,12 +28,23 @@ const ProductPurchaseHistory = () => {
 
   const handleSearch = async (value) => {
     setQuery(value);
+
     if (!value.trim()) {
       setResults([]);
       return;
     }
-    const data = await getAllProducts(value);
-    setResults(data);
+
+    try {
+      const response = await getAllProducts(value);
+
+      // ➜ MERR VETËM LISTËN E PRODUKTEVE NGA "content"
+      const products = response?.content || [];
+
+      setResults(products);
+    } catch (error) {
+      console.error("Gabim gjatë kërkimit të produkteve", error);
+      setResults([]);
+    }
   };
 
   return (
@@ -61,7 +72,9 @@ const ProductPurchaseHistory = () => {
 
       {history && (
         <div className="history-card">
-          <h3>{history.productName} ({history.barcode})</h3>
+          <h3>
+            {history.productName} ({history.barcode})
+          </h3>
 
           <table className="history-table">
             <thead>
@@ -88,10 +101,8 @@ const ProductPurchaseHistory = () => {
               ))}
             </tbody>
           </table>
-
         </div>
       )}
-
     </div>
   );
 };
