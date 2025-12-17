@@ -1,5 +1,5 @@
 // src/components/invoice/CreatePurchaseInvoice.jsx
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../services/auth/AuthContext";
 import { createPurchaseInvoice } from "../../services/request/invoiceService";
@@ -29,6 +29,130 @@ const CreatePurchaseInvoice = () => {
     setTimeout(() => setNotification(null), 4000);
   };
 
+  // =============================
+  // SUPPLIER COMBOBOX
+  // =============================
+  const SupplierCombobox = ({ valueId, onChange, allSuppliers }) => {
+    const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState("");
+    const [filteredSuppliers, setFilteredSuppliers] = useState([]);
+    const dropdownRef = useRef(null);
+    const triggerRef = useRef(null);
+
+    const currentName =
+      allSuppliers.find((s) => s.id === valueId)?.name || "Zgjedh Furnitorin";
+
+    useEffect(() => {
+      if (!open) {
+        setSearch("");
+        return;
+      }
+      async function fetchSuppliers() {
+        try {
+          const res = await getAllSuppliers(search);
+          setFilteredSuppliers(res.content || res || []);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      fetchSuppliers();
+    }, [search, open]);
+
+    useEffect(() => {
+      if (!open) return;
+      const handleClickOutside = (event) => {
+        if (triggerRef.current && !triggerRef.current.contains(event.target)) {
+          setOpen(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [open]);
+
+    const handleSelect = (supplier) => {
+      onChange(supplier.id);
+      setOpen(false);
+    };
+
+    const dropdownStyle = {
+      position: "absolute",
+      zIndex: 1000,
+      background: "#2a2a3d",
+      border: "1px solid #444",
+      borderRadius: "6px",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+      minWidth: "200px",
+      maxHeight: "200px",
+      overflowY: "auto",
+    };
+
+    const inputStyle = {
+      width: "100%",
+      padding: "5px",
+      border: "none",
+      borderBottom: "1px solid #444",
+      outline: "none",
+      background: "#2a2a3d",
+      color: "#f1f1f1",
+    };
+
+    const listStyle = { listStyle: "none", padding: 0, margin: 0 };
+    const itemStyle = { 
+      padding: "8px 12px", 
+      cursor: "pointer", 
+      borderBottom: "1px solid #333",
+      color: "#f1f1f1",
+      background: "#2a2a3d"
+    };
+    const triggerStyle = { 
+      position: "relative", 
+      cursor: "pointer", 
+      minWidth: "150px", 
+      padding: "5px", 
+      border: "1px solid #444", 
+      borderRadius: "6px", 
+      background: "#2a2a3d",
+      color: "#f1f1f1"
+    };
+
+    return (
+      <div ref={triggerRef} style={triggerStyle} onClick={() => setOpen(!open)}>
+        {currentName}
+        {open && (
+          <div ref={dropdownRef} style={{ ...dropdownStyle, top: "100%", left: 0, marginTop: "2px" }}>
+            <input
+              autoFocus
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Kërko furnitorë..."
+              style={inputStyle}
+              onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}
+            />
+            <ul style={listStyle}>
+              {filteredSuppliers.map((s) => (
+                <li 
+                  key={s.id} 
+                  onClick={() => handleSelect(s)} 
+                  style={itemStyle}
+                  onMouseOver={(e) => { e.target.style.background = "#38385a"; }}
+                  onMouseOut={(e) => { e.target.style.background = "#2a2a3d"; }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  {s.name}
+                </li>
+              ))}
+              {filteredSuppliers.length === 0 && (
+                <li style={{ ...itemStyle, color: "#999", cursor: "default" }}>Asnjë furnitor nuk u gjet</li>
+              )}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // Ngarko draftin ose rreshtin default
   useEffect(() => {
     const savedDraft = localStorage.getItem("invoiceDraft");
@@ -45,7 +169,7 @@ const CreatePurchaseInvoice = () => {
   }, []);
 
   useEffect(() => {
-    getAllSuppliers().then(setSuppliers).catch(console.error);
+    getAllSuppliers("").then(res => setSuppliers(res.content || res || [])).catch(console.error);
   }, []);
 
   // Totali
@@ -87,7 +211,7 @@ const CreatePurchaseInvoice = () => {
       if (searchQuery.trim().length > 1 && !/^\d+$/.test(searchQuery)) {
         try {
           const results = await getAllProducts(searchQuery);
-          setSearchResults(results || []);
+          setSearchResults(results.content || results || []);
         } catch {
           setSearchResults([]);
         }
@@ -231,10 +355,7 @@ const CreatePurchaseInvoice = () => {
           </div>
           <div>
             <label>Furnitori</label>
-            <select value={selectedSupplier} onChange={e => setSelectedSupplier(e.target.value)} required>
-              <option value="">Zgjidh Furnitorin</option>
-              {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
+            <SupplierCombobox valueId={selectedSupplier} onChange={(id) => setSelectedSupplier(id)} allSuppliers={suppliers} />
           </div>
         </section>
 

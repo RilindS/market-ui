@@ -37,7 +37,7 @@ const CashRecordsPage = () => {
 
     return (
         <div style={{ padding: "20px" }}>
-            <h2>Raportet Ditore të Kasës</h2>
+            <h2>Raportet Ditore të Kacës</h2>
 
             {/* FILTERS */}
             <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
@@ -74,10 +74,10 @@ const CashRecordsPage = () => {
                     <thead>
                         <tr style={{ background: "#f0f0f0" }}>
                             <th style={th}>Data</th>
-                            <th style={th}>Fillestare</th>
-                            <th style={th}>Shitje</th>
-                            <th style={th}>Blerje</th>
-                            <th style={th}>Mbyllje</th>
+                            <th style={th}>Gjendja Fillestare e Kacës</th>
+                            <th style={th}>Shitje(Daljet)</th>
+                            <th style={th}>Blerje(Hyrjet)</th>
+                            <th style={th}>Mbyllje()</th>
                             <th style={th}>Borgje</th>
                         </tr>
                     </thead>
