@@ -49,16 +49,16 @@ const AdminSidebar = () => {
       {/* --- Sidebar --- */}
       <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
         <ul>
-          {/* <li>
-            <Link to="/admin/dashboard">
-              <FontAwesomeIcon icon={faTachometerAlt} />
-              {!collapsed && " Dashboard"}
-            </Link>
-          </li> */}
           <li>
             <Link to="/admin/order/create">
               <FontAwesomeIcon icon={faCartPlus} />
               {!collapsed && " Krijo Porosi"}
+            </Link>
+          </li>
+          <li>
+            <Link to="/admin/invoice/create">
+              <FontAwesomeIcon icon={faFileInvoiceDollar} />
+              {!collapsed && " Regjistro Fature"}
             </Link>
           </li>
           <li>
@@ -75,12 +75,6 @@ const AdminSidebar = () => {
             </Link>
           </li>
 
-          <li>
-            <Link to="/admin/invoice/create">
-              <FontAwesomeIcon icon={faFileInvoiceDollar} />
-              {!collapsed && " Regjistro Fature"}
-            </Link>
-          </li>
 
           <li>
             <Link to="/admin/purchase/summary">
@@ -111,13 +105,6 @@ const AdminSidebar = () => {
           </li>
 
           <li>
-            <Link to="/admin/end-day">
-              <FontAwesomeIcon icon={faCalendarCheck} />
-              {!collapsed && " Përfundo Ditën"}
-            </Link>
-          </li>
-
-          <li>
             <Link to="/admin/product-stats">
               <FontAwesomeIcon icon={faWarehouse} />
               {!collapsed && " Stoqet"}
@@ -143,16 +130,23 @@ const AdminSidebar = () => {
               {!collapsed && " Oret e userave tjere"}
             </Link>
           </li>
-          <li>
-            <Link to="#" onClick={handleLogout}>
-              <FontAwesomeIcon icon={faSignOutAlt} />
-              {!collapsed && " Log Out"}
-            </Link>
-          </li>
+       
           <li>
             <Link to="/admin/cash-record">
               <FontAwesomeIcon icon={faChartLine} />
               {!collapsed && "Hyrjet / Dalje"}
+            </Link>
+          </li>
+           <li>
+            <Link to="/admin/end-day">
+              <FontAwesomeIcon icon={faCalendarCheck} />
+              {!collapsed && " Përfundo Ditën"}
+            </Link>
+          </li>
+             <li>
+            <Link to="#" onClick={handleLogout}>
+              <FontAwesomeIcon icon={faSignOutAlt} />
+              {!collapsed && " Log Out"}
             </Link>
           </li>
         </ul>

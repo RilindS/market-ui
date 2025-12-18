@@ -1,14 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import { createProduct, getAllProducts, getProductByBarcode, updateProduct } from "../../services/request/productService";
+import { useNavigate } from "react-router-dom";
+import {
+  createProduct,
+  getAllProducts,
+  getProductByBarcode,
+  updateProduct,
+} from "../../services/request/productService";
 import { getAllSuppliers } from "../../services/request/supplierService";
 
 const PAGE_SIZE = 20;
 
 const EditableProductTable = () => {
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
 
-  const [search, setSearch] = useState("");
+  const [searchName, setSearchName] = useState("");
+  const [searchBarcode, setSearchBarcode] = useState("");
+
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -36,25 +46,26 @@ const EditableProductTable = () => {
     setTimeout(() => setNotification(""), 2500);
   };
 
-  // =============================
-  // BARCODE DUPLICATE CHECK FOR CREATE
-  // =============================
+  /* =============================
+     BARCODE DUPLICATE CHECK
+  ============================= */
   const checkBarcodeDuplicate = async (barcode) => {
-    if (!barcode || barcode.trim() === "") {
+    if (!barcode) {
       setBarcodeDuplicate(false);
-      setBarcodeCheckLoading(false);
       return;
     }
 
     setBarcodeCheckLoading(true);
     try {
-      const existingProduct = await getProductByBarcode(barcode);
-      setBarcodeDuplicate(existingProduct !== null);
-      if (existingProduct !== null) {
-        showNotification("Barcode ekziston tashmë! Zgjidhni një tjetër.");
+      const existing = await getProductByBarcode(barcode.trim());
+      if (existing) {
+        setBarcodeDuplicate(true);
+        showNotification("Barcode ekziston tashmë!");
+      } else {
+        setBarcodeDuplicate(false);
       }
     } catch (err) {
-      console.error("Error checking barcode:", err);
+      console.error(err);
       setBarcodeDuplicate(false);
     }
     setBarcodeCheckLoading(false);
@@ -73,45 +84,37 @@ const EditableProductTable = () => {
     }, 500);
   };
 
-  // =============================
-  // FETCH PRODUCTS (WITH OR WITHOUT PAGINATION)
-  // =============================
+  /* =============================
+     LOAD PRODUCTS
+  ============================= */
   const loadProducts = async () => {
     if (loading) return;
     setLoading(true);
 
     try {
-      let res;
-
-      if (search && search.trim() !== "") {
-        // SEARCH ACTIVE: fetch all matching products without pagination
-        res = await getAllProducts(search); 
+      // 🔴 SEARCH BY BARCODE (EXACT)
+      if (searchBarcode.trim() !== "") {
+        const product = await getProductByBarcode(searchBarcode.trim());
+        setProducts(product ? [product] : []);
+        setHasMore(false);
+      }
+      // 🟢 SEARCH BY NAME
+      else if (searchName.trim() !== "") {
+        const res = await getAllProducts(searchName.trim());
         setProducts(res.content || []);
-        setHasMore(false); // disable pagination during search
-      } else {
-        // NORMAL PAGINATION
-        res = await getAllProducts(search, page, PAGE_SIZE);
+        setHasMore(false);
+      }
+      // 🔵 NORMAL PAGINATION
+      else {
+        const res = await getAllProducts("", page, PAGE_SIZE);
         const content = res.content || [];
 
         setProducts((prev) => {
-          let updated;
-          if (page === 0) {
-            updated = content;
-          } else {
-            const existingIds = new Set(prev.map((p) => p.id));
-            const newContent = content.filter((p) => !existingIds.has(p.id));
-            updated = [...prev, ...newContent];
-          }
+          if (page === 0) return content;
 
-          return updated.sort((a, b) => {
-            const aLen = a.barcode?.length || 0;
-            const bLen = b.barcode?.length || 0;
-            if (aLen > 4 && bLen > 4) {
-              return parseInt(a.barcode, 10) - parseInt(b.barcode, 10);
-            } else {
-              return (a.barcode || "").localeCompare(b.barcode || "");
-            }
-          });
+          const existingIds = new Set(prev.map((p) => p.id));
+          const newContent = content.filter((p) => !existingIds.has(p.id));
+          return [...prev, ...newContent];
         });
 
         if (content.length < PAGE_SIZE || res.last === true) {
@@ -125,56 +128,27 @@ const EditableProductTable = () => {
     setLoading(false);
   };
 
-  // Reset products on search or refresh
+  /* =============================
+     EFFECTS
+  ============================= */
   useEffect(() => {
     setProducts([]);
     setPage(0);
     setHasMore(true);
     loadProducts();
-  }, [search, refresh]);
+  }, [searchName, searchBarcode, refresh]);
 
-  // Load next page
   useEffect(() => {
-    if (!search || search.trim() === "") {
+    if (!searchName && !searchBarcode) {
       loadProducts();
     }
   }, [page]);
 
-  // Scroll handler for infinite scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 500
-      ) {
-        if (!loading && hasMore) {
-          const now = Date.now();
-          if (!window.lastScrollTrigger || now - window.lastScrollTrigger > 1000) {
-            window.lastScrollTrigger = now;
-            setPage((p) => p + 1);
-          }
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [loading, hasMore]);
-
-  useEffect(() => {
-    return () => {
-      if (barcodeTimeoutRef.current) clearTimeout(barcodeTimeoutRef.current);
-    };
-  }, []);
-
-  // =============================
-  // FETCH ALL SUPPLIERS (ONCE)
-  // =============================
   useEffect(() => {
     async function fetchSuppliers() {
       try {
-        const result = await getAllSuppliers("");
-        setSuppliers(result);
+        const res = await getAllSuppliers("");
+        setSuppliers(res);
       } catch (err) {
         console.error(err);
       }
@@ -182,18 +156,23 @@ const EditableProductTable = () => {
     fetchSuppliers();
   }, []);
 
-  // =============================
-  // CREATE PRODUCT
-  // =============================
+  useEffect(() => {
+    return () => {
+      if (barcodeTimeoutRef.current) clearTimeout(barcodeTimeoutRef.current);
+    };
+  }, []);
+
+  /* =============================
+     CREATE PRODUCT
+  ============================= */
   const handleCreate = async () => {
     if (barcodeDuplicate) {
-      showNotification("Barcode ekziston tashmë! Zgjidhni një tjetër.");
+      showNotification("Barcode ekziston tashmë!");
       return;
     }
 
     try {
       await createProduct(newProduct);
-
       setNewProduct({
         barcode: "",
         name: "",
@@ -205,38 +184,29 @@ const EditableProductTable = () => {
         active: true,
       });
       setBarcodeDuplicate(false);
-
       showNotification("Produkti u krijua me sukses!");
-      setRefresh((prev) => !prev);
-    } catch (error) {
-      console.error(error);
-      showNotification("Gabim gjatë krijimit të produktit!");
+      setRefresh((p) => !p);
+    } catch (err) {
+      console.error(err);
+      showNotification("Gabim gjatë krijimit!");
     }
   };
 
-  // =============================
-  // EDIT PRODUCT
-  // =============================
+  /* =============================
+     EDIT PRODUCT
+  ============================= */
   const handleEdit = async (id, field, value) => {
     if (field === "barcode") {
-      const currentProduct = products.find((p) => p.id === id);
-      if (value && value !== currentProduct?.barcode) {
-        try {
-          const existingProduct = await getProductByBarcode(value);
-          if (existingProduct && existingProduct.id !== id) {
-            showNotification("Barcode ekziston tashmë! Zgjidhni një tjetër.");
-            return;
-          }
-        } catch (err) {
-          console.error(err);
-        }
+      const existing = await getProductByBarcode(value);
+      if (existing && existing.id !== id) {
+        showNotification("Barcode ekziston tashmë!");
+        return;
       }
     }
 
-    const updated = products.map((p) =>
-      p.id === id ? { ...p, [field]: value } : p
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
     );
-    setProducts(updated);
 
     try {
       await updateProduct(id, { [field]: value });
@@ -245,99 +215,61 @@ const EditableProductTable = () => {
     }
   };
 
-  // =============================
-  // SUPPLIER COMBOBOX
-  // =============================
-  const SupplierCombobox = ({ valueId, onChange, allSuppliers }) => {
+  /* =============================
+     SUPPLIER COMBOBOX
+  ============================= */
+  const SupplierCombobox = ({ valueId, onChange }) => {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
-    const [filteredSuppliers, setFilteredSuppliers] = useState([]);
-    const dropdownRef = useRef(null);
-    const triggerRef = useRef(null);
+    const [list, setList] = useState([]);
+    const ref = useRef(null);
 
     const currentName =
-      allSuppliers.find((s) => s.id === valueId)?.name || "Zgjedh Furnitorin";
-
-    useEffect(() => {
-      if (!open) {
-        setSearch("");
-        return;
-      }
-      async function fetchSuppliers() {
-        try {
-          const res = await getAllSuppliers(search);
-          setFilteredSuppliers(res);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      fetchSuppliers();
-    }, [search, open]);
+      suppliers.find((s) => s.id === valueId)?.name || "Zgjedh Furnitorin";
 
     useEffect(() => {
       if (!open) return;
-      const handleClickOutside = (event) => {
-        if (triggerRef.current && !triggerRef.current.contains(event.target)) {
-          setOpen(false);
-        }
+      getAllSuppliers(search).then(setList);
+    }, [search, open]);
+
+    useEffect(() => {
+      const close = (e) => {
+        if (ref.current && !ref.current.contains(e.target)) setOpen(false);
       };
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, [open]);
-
-    const handleSelect = (supplier) => {
-      onChange(supplier.id);
-      setOpen(false);
-    };
-
-    const dropdownStyle = {
-      position: "absolute",
-      zIndex: 1000,
-      background: "white",
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-      minWidth: "200px",
-      maxHeight: "200px",
-      overflowY: "auto",
-    };
-
-    const inputStyle = {
-      width: "100%",
-      padding: "5px",
-      border: "none",
-      borderBottom: "1px solid #eee",
-      outline: "none",
-    };
-
-    const listStyle = { listStyle: "none", padding: 0, margin: 0 };
-    const itemStyle = { padding: "8px 12px", cursor: "pointer", borderBottom: "1px solid #f0f0f0" };
-    const triggerStyle = { position: "relative", cursor: "pointer", minWidth: "150px", padding: "5px", border: "1px solid #ccc", borderRadius: "4px", background: "white" };
+      document.addEventListener("mousedown", close);
+      return () => document.removeEventListener("mousedown", close);
+    }, []);
 
     return (
-      <div ref={triggerRef} style={triggerStyle} onClick={() => setOpen(!open)}>
-        {currentName}
+      <div ref={ref} style={{ position: "relative" }}>
+        <div
+          onClick={() => setOpen(!open)}
+          style={{ border: "1px solid #ccc", padding: "5px", cursor: "pointer" }}
+        >
+          {currentName}
+        </div>
+
         {open && (
-          <div ref={dropdownRef} style={{ ...dropdownStyle, top: "100%", left: 0, marginTop: "2px" }}>
+          <div style={{ position: "absolute", background: "#fff", zIndex: 1000 }}>
             <input
               autoFocus
+              placeholder="Kërko furnitor..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Kërko furnitorë..."
-              style={inputStyle}
-              onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}
             />
-            <ul style={listStyle}>
-              {filteredSuppliers.map((s) => (
-                <li key={s.id} onClick={() => handleSelect(s)} style={itemStyle} onMouseDown={(e) => e.preventDefault()}>
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              {list.map((s) => (
+                <li
+                  key={s.id}
+                  style={{ padding: "6px", cursor: "pointer" }}
+                  onClick={() => {
+                    onChange(s.id);
+                    setOpen(false);
+                  }}
+                >
                   {s.name}
                 </li>
               ))}
-              {filteredSuppliers.length === 0 && (
-                <li style={{ ...itemStyle, color: "#999", cursor: "default" }}>Asnjë furnitor nuk u gjet</li>
-              )}
             </ul>
           </div>
         )}
@@ -348,25 +280,56 @@ const EditableProductTable = () => {
   return (
     <div>
       {notification && (
-        <div style={{ background: "#4caf50", padding: "10px", color: "white", marginBottom: "10px", borderRadius: "5px", textAlign: "center", fontWeight: "bold" }}>
+        <div style={{ background: "#4caf50", color: "#fff", padding: "8px" }}>
           {notification}
         </div>
       )}
 
-      <input
-        type="text"
-        placeholder="Search by product name"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{ marginBottom: "15px", padding: "5px", width: "300px" }}
-      />
+    
+<div style={{ display: "flex", justifyContent: "space-between", marginBottom: "15px" }}>
+  <div style={{ display: "flex", gap: "10px" }}>
+    <input
+      placeholder="Search by name"
+      value={searchName}
+      onChange={(e) => {
+        setSearchName(e.target.value);
+        setSearchBarcode("");
+      }}
+    />
 
-      <table border="1" cellPadding="5" style={{ width: "100%", marginTop: "20px" }}>
+    <input
+      placeholder="Search by barcode"
+      value={searchBarcode}
+      onChange={(e) => {
+        setSearchBarcode(e.target.value);
+        setSearchName("");
+      }}
+    />
+  </div>
+
+  <button
+    onClick={() => navigate("/admin/create-product")}
+    style={{
+      backgroundColor: "#1976d2",
+      color: "white",
+      border: "none",
+      padding: "8px 14px",
+      borderRadius: "4px",
+      cursor: "pointer",
+      fontWeight: "500",
+    }}
+  >
+    + Create Product
+  </button>
+</div>
+
+      {/* TABLE */}
+      <table border="1" width="100%">
         <thead>
           <tr>
             <th>Barcode</th>
             <th>Name</th>
-            <th>Price (€)</th>
+            <th>Price</th>
             <th>Description</th>
             <th>Stock</th>
             <th>Supplier</th>
@@ -376,53 +339,136 @@ const EditableProductTable = () => {
         </thead>
         <tbody>
           {/* CREATE ROW */}
-          <tr style={{ background: "#e9ffe9" }}>
+          <tr>
             <td>
               <input
-                type="text"
                 value={newProduct.barcode}
                 onChange={handleBarcodeChange}
-                placeholder={barcodeCheckLoading ? "Duke kontrolluar..." : (barcodeDuplicate ? "Barcode i zënë" : "Barcode")}
-                style={{ borderColor: barcodeDuplicate ? "red" : (barcodeCheckLoading ? "orange" : "#ccc") }}
+                style={{ borderColor: barcodeDuplicate ? "red" : "#ccc" }}
               />
             </td>
-            <td><input type="text" value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} /></td>
-            <td><input type="number" value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })} /></td>
-            <td><input type="text" value={newProduct.description} onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} /></td>
-            <td><input type="number" value={newProduct.stockQuantity} onChange={(e) => setNewProduct({ ...newProduct, stockQuantity: e.target.value })} /></td>
             <td>
-              <SupplierCombobox valueId={newProduct.supplierId} onChange={(id) => setNewProduct({ ...newProduct, supplierId: Number(id) })} allSuppliers={suppliers} />
+              <input
+                value={newProduct.name}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, name: e.target.value })
+                }
+              />
             </td>
-            <td><input type="checkbox" checked={newProduct.active} onChange={(e) => setNewProduct({ ...newProduct, active: e.target.checked })} /></td>
             <td>
-              <button
-                onClick={handleCreate}
-                disabled={barcodeDuplicate || barcodeCheckLoading}
-                style={{ backgroundColor: barcodeDuplicate ? "#f44336" : (barcodeCheckLoading ? "#ff9800" : "#4caf50"), color: "white" }}
-              >
-                {barcodeCheckLoading ? "Duke kontrolluar..." : "Create"}
-              </button>
+              <input
+                type="number"
+                value={newProduct.price}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, price: e.target.value })
+                }
+              />
+            </td>
+            <td>
+              <input
+                value={newProduct.description}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, description: e.target.value })
+                }
+              />
+            </td>
+            <td>
+              <input
+                type="number"
+                value={newProduct.stockQuantity}
+                onChange={(e) =>
+                  setNewProduct({
+                    ...newProduct,
+                    stockQuantity: e.target.value,
+                  })
+                }
+              />
+            </td>
+            <td>
+              <SupplierCombobox
+                valueId={newProduct.supplierId}
+                onChange={(id) =>
+                  setNewProduct({ ...newProduct, supplierId: id })
+                }
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                checked={newProduct.active}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, active: e.target.checked })
+                }
+              />
+            </td>
+            <td>
+              <button onClick={handleCreate}>Create</button>
             </td>
           </tr>
 
-          {/* LIST PRODUCTS */}
-          {products.map((product) => (
-            <tr key={product.id}>
-              <td><input type="text" value={product.barcode || ""} onChange={(e) => handleEdit(product.id, "barcode", e.target.value)} /></td>
-              <td><input type="text" value={product.name || ""} onChange={(e) => handleEdit(product.id, "name", e.target.value)} /></td>
-              <td><input type="number" value={product.price || ""} onChange={(e) => handleEdit(product.id, "price", e.target.value)} /></td>
-              <td><input type="text" value={product.description || ""} onChange={(e) => handleEdit(product.id, "description", e.target.value)} /></td>
-              <td><input type="number" value={product.stockQuantity || ""} onChange={(e) => handleEdit(product.id, "stockQuantity", e.target.value)} /></td>
-              <td><SupplierCombobox valueId={product.supplierId || ""} onChange={(id) => handleEdit(product.id, "supplierId", Number(id))} allSuppliers={suppliers} /></td>
-              <td><input type="checkbox" checked={product.active} onChange={(e) => handleEdit(product.id, "active", e.target.checked)} /></td>
-              <td></td>
+          {/* PRODUCTS */}
+          {products.map((p) => (
+            <tr key={p.id}>
+              <td>
+                <input
+                  value={p.barcode}
+                  onChange={(e) =>
+                    handleEdit(p.id, "barcode", e.target.value)
+                  }
+                />
+              </td>
+              <td>
+                <input
+                  value={p.name}
+                  onChange={(e) => handleEdit(p.id, "name", e.target.value)}
+                />
+              </td>
+              <td>
+                <input
+                  value={p.price}
+                  onChange={(e) => handleEdit(p.id, "price", e.target.value)}
+                />
+              </td>
+              <td>
+                <input
+                  value={p.description}
+                  onChange={(e) =>
+                    handleEdit(p.id, "description", e.target.value)
+                  }
+                />
+              </td>
+              <td>
+                <input
+                  value={p.stockQuantity}
+                  onChange={(e) =>
+                    handleEdit(p.id, "stockQuantity", e.target.value)
+                  }
+                />
+              </td>
+              <td>
+                <SupplierCombobox
+                  valueId={p.supplierId}
+                  onChange={(id) =>
+                    handleEdit(p.id, "supplierId", id)
+                  }
+                />
+              </td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={p.active}
+                  onChange={(e) =>
+                    handleEdit(p.id, "active", e.target.checked)
+                  }
+                />
+              </td>
+              <td />
             </tr>
           ))}
         </tbody>
       </table>
 
-      {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
-      {!hasMore && !search && <p style={{ textAlign: "center" }}>No more products</p>}
+      {loading && <p>Loading...</p>}
     </div>
   );
 };
