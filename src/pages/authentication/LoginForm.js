@@ -33,9 +33,9 @@ const LoginForm = () => {
         localStorage.setItem('userId', userId)
   
         if (userRole === 'ADMIN') {
-          navigate('/admin/dashboard');
+          navigate('/admin/order/create');
         } else if (userRole === 'USER') {
-          navigate('/user/dashboard');
+          navigate('/user/order/create');
         } else {
           navigate('/');
         }

@@ -11,6 +11,18 @@ const CashRecordsPage = () => {
     const [month, setMonth] = useState("");
 
     const [loading, setLoading] = useState(true);
+const shqipMonths = [
+  "Janar", "Shkurt", "Mars", "Prill", "Maj", "Qershor",
+  "Korrik", "Gusht", "Shtator", "Tetor", "Nëntor", "Dhjetor"
+];
+
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const monthName = shqipMonths[date.getMonth()]; // Muaji në shqip
+    const year = date.getFullYear();
+    return `${day} ${monthName} ${year}`;
+};
 
 
     const loadRecords = async () => {
@@ -73,26 +85,26 @@ const CashRecordsPage = () => {
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
                         <tr style={{ background: "#f0f0f0" }}>
-                            <th style={th}>Data</th>
+                            <th style={th}>Data</th>  
                             <th style={th}>Gjendja Fillestare e Kacës</th>
+
                             <th style={th}>Shitje(Daljet)</th>
                             <th style={th}>Blerje(Hyrjet)</th>
-                            <th style={th}>Mbyllje()</th>
-                            <th style={th}>Borgje</th>
+                            <th style={th}>Borgje Te Paguara</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {records.map((r, i) => (
-                            <tr key={i}>
-                                <td style={td}>{r.date}</td>
-                                <td style={td}>{r.openingBalance.toFixed(2)}</td>
-                                <td style={td}>{r.totalSales.toFixed(2)}</td>
-                                <td style={td}>{r.totalPurchases.toFixed(2)}</td>
-                                <td style={td}>{r.closingBalance.toFixed(2)}</td>
-                                <td style={td}>{r.debtPayments.toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
+                        <tbody>
+            {records.map((r, i) => (
+                <tr key={i}>
+                    <td style={td}>{formatDate(r.date)}</td>                                
+                    <td style={td}>{r.closingBalance.toFixed(2)}</td>
+                    <td style={td}>{r.totalSales.toFixed(2)}</td>
+                    <td style={td}>{r.totalPurchases.toFixed(2)}</td>
+                    <td style={td}>{r.debtPayments.toFixed(2)}</td>
+                </tr>
+            ))}
+        </tbody>
+
                 </table>
             )}
 
