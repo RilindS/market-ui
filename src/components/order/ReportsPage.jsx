@@ -55,6 +55,15 @@ const ReportsPage = () => {
       setToDate('');
     }
   };
+  const formatDateDDMMYYYY = (dateString) => {
+  if (!dateString) return 'N/A';
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 
   if (loading) {
     return (
@@ -151,7 +160,8 @@ const ReportsPage = () => {
                     <tr key={report.id}>
                       <td>{report.id || 'N/A'}</td>
                       <td>
-                        {report.orderDate ? new Date(report.orderDate).toLocaleDateString('sq-AL') : 'N/A'}
+                        <td>{formatDateDDMMYYYY(report.orderDate)}</td>
+
                       </td>
                       <td className="status-badge">
                         <span className={

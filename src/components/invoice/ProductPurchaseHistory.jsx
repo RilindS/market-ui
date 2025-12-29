@@ -46,6 +46,25 @@ const ProductPurchaseHistory = () => {
       setResults([]);
     }
   };
+const formatDate = (dateString, withTime = false) => {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  if (!withTime) {
+    return `${day}-${month}-${year}`;
+  }
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+};
 
   return (
     <div className="product-history-container">
@@ -93,7 +112,7 @@ const ProductPurchaseHistory = () => {
                 <tr key={i}>
                   <td>{h.invoiceNumber}</td>
                   <td>{h.supplierName}</td>
-                  <td>{h.invoiceDate.replace("T", " ")}</td>
+<td>{formatDate(h.invoiceDate, true)}</td>
                   <td>{h.quantity}</td>
                   <td>{h.unitPrice.toFixed(2)}€</td>
                   <td>{h.totalPrice.toFixed(2)}€</td>

@@ -57,8 +57,34 @@ export const AdminRoutes = [
 
 export const UserRoutes = [
 //   { path: "/dashboard", element: <DoctorDashboard /> },
-//   { path: "/", element: <DoctorDashboard /> },
-{ path: "create-supplier", element: <ProductListPage /> },
+{ path: "products", element: <ProductListPage /> },
+     { path: "create-product", element: <CreateProductPage /> },
+     { path: "suppliers", element: <SupplierList /> },
+     { path: "suppliers/create-supplier", element: <CreateSupplier /> },
+     { path: "suppliers/edit-suppliers/:id", element: <EditSupplier /> },
+
+     { path: "clients", element: <ClientList /> },
+     { path: "clients/create-client", element: <CreateClient /> },
+     { path: "clients/edit-client/:id", element: <EditClient /> },
+     
+
+     { path: "order/create", element: <CreateOrder /> },
+
+     { path: "my-work-times", element: <UserWorkTime /> },
+     { path: "user-work-overview", element: <UserWorkOverview /> },
+     { path: "invoice/create", element: <CreatePurchaseInvoice /> },
+     { path: "purchase/summary", element: <PurchaseSummary /> },
+     { path: "product-history/:id", element: <ProductPurchaseHistory /> },
+     { path: "product-history", element: <ProductPurchaseHistory /> },
+     { path: "supplier-products", element: <SupplierProducts /> },
+     { path: "/reports", element: <ReportsPage /> },
+     { path: "/order/:id", element: <OrderDetailsPage /> },
+     { path: "/end-day", element: <CashPage /> },
+     { path: "/debt-managment", element: <DebtManagement /> },
+     { path: "/product-stats", element: <ProductStats /> },
+        //{ path: "/product-stats", element: <ProductStats /> },
+    { path: "/cash-record", element: <CashRecordsPage /> },
+
 
 ];
 

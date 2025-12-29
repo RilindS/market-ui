@@ -3,6 +3,7 @@ import {
   faBox,
   faCalendarCheck,
   faCartPlus,
+  faChartLine,
   faClock,
   faFileInvoiceDollar,
   faHistory,
@@ -39,6 +40,14 @@ const UserSidebar = () => {
       {/* --- Sidebar --- */}
       <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
         <ul>
+
+          
+          <li>
+            <Link to="/user/order/create">
+              <FontAwesomeIcon icon={faCartPlus} />
+              {!collapsed && " Krijo Porosi"}
+            </Link>
+          </li>
           <li>
             <Link to="/user/products">
               <FontAwesomeIcon icon={faBox} />
@@ -53,12 +62,6 @@ const UserSidebar = () => {
             </Link>
           </li>
 
-          <li>
-            <Link to="/user/order/create">
-              <FontAwesomeIcon icon={faCartPlus} />
-              {!collapsed && " Krijo Porosi"}
-            </Link>
-          </li>
 
           <li>
             <Link to="/user/my-work-times">
@@ -66,7 +69,12 @@ const UserSidebar = () => {
               {!collapsed && " Oret e mia"}
             </Link>
           </li>
-
+          <li>
+            <Link to="/user/reports">
+              <FontAwesomeIcon icon={faChartLine} />
+              {!collapsed && " Detajet e Shitjeve"}
+            </Link>
+          </li>
           <li>
             <Link to="/user/invoice/create">
               <FontAwesomeIcon icon={faFileInvoiceDollar} />
