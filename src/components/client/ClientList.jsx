@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../services/axios";
 import {
-  deleteClient,
   getAllClients,
   getClientDebt1,
-  getClientPayments,
+  getClientPayments
 } from "../../services/request/clientService";
 import "./Client.scss";
 
+
 const ClientList = () => {
+  const navigate = useNavigate();
+
   const [clients, setClients] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedClient, setSelectedClient] = useState(null);
@@ -53,18 +56,18 @@ const ClientList = () => {
   };
 
   /* ================== CLIENT ACTIONS ================== */
-  const handleDelete = async (id) => {
-    if (window.confirm("A jeni të sigurt që doni të fshini këtë klient?")) {
-      try {
-        await deleteClient(id);
-        fetchClients(search);
-        showNotification("success", "Klienti u fshi me sukses!");
-      } catch (error) {
-        console.error("Gabim gjatë fshirjes:", error);
-        showNotification("error", "Gabim gjatë fshirjes së klientit");
-      }
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   if (window.confirm("A jeni të sigurt që doni të fshini këtë klient?")) {
+  //     try {
+  //       await deleteClient(id);
+  //       fetchClients(search);
+  //       showNotification("success", "Klienti u fshi me sukses!");
+  //     } catch (error) {
+  //       console.error("Gabim gjatë fshirjes:", error);
+  //       showNotification("error", "Gabim gjatë fshirjes së klientit");
+  //     }
+  //   }
+  // };
 
   const handleSelectClient = async (client) => {
     try {
@@ -140,10 +143,10 @@ const ClientList = () => {
   };
 
   /* ================== EDIT CLIENT ================== */
-  const handleEditClient = (client) => {
-    // Placeholder – modal ose page mund të implementohet këtu
-    showNotification("info", `Edit klient: ${client.name} (implemento modalin)`);
-  };
+ const handleEditClient = (client) => {
+  navigate(`edit-client/${client.id}`);
+};
+
 
   return (
     <div className="client-container">
@@ -154,6 +157,32 @@ const ClientList = () => {
           {notification.type === "success" ? "✓" : "✕"} {notification.message}
         </div>
       )}
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "15px",
+  }}
+>
+  <h2 style={{ margin: 0 }}>Clients List</h2>
+
+<button
+  onClick={() => navigate("create-client")}
+  style={{
+    padding: "10px 15px",
+    backgroundColor: "#4caf50",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  }}
+>
+  + Shto Klient
+</button>
+
+</div>
 
       <input
         type="text"
@@ -199,6 +228,8 @@ const ClientList = () => {
                 >
                   Shiko Detaje
                 </button>
+
+                
                 <button
                   onClick={() => handleEditClient(cli)}
                   style={{
@@ -211,12 +242,12 @@ const ClientList = () => {
                 >
                   Edit
                 </button>
-                <button
+                {/* <button
                   className="delete-btn"
                   onClick={() => handleDelete(cli.id)}
                 >
                   Delete
-                </button>
+                </button> */}
               </td>
             </tr>
           ))}

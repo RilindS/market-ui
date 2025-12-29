@@ -11,6 +11,7 @@ const CreateClient = () => {
     email: "",
   });
 
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,27 +22,81 @@ const CreateClient = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       await createClient(client);
-      navigate("/admin/clients");
-    } catch (error) {}
+      navigate(".."); // kthehet te ClientList (relative route)
+    } catch (error) {
+      alert("Gabim gjatë krijimit të klientit!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="client-form">
-      <input type="text" name="name" placeholder="Emri dhe Mbiemri"
-             value={client.name} onChange={handleChange} required />
+    <div className="client-form-wrapper">
+      <h2>➕ Shto Klient të Ri</h2>
 
-      <input type="text" name="address" placeholder="Adresa"
-             value={client.address} onChange={handleChange} />
+      <form onSubmit={handleSubmit} className="client-form-card">
+        <div className="form-group">
+          <label>Emri dhe Mbiemri *</label>
+          <input
+            type="text"
+            name="name"
+            placeholder="p.sh. Rilind Simnica"
+            value={client.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-      <input type="tel" name="phone" placeholder="Phone"
-             value={client.phone} onChange={handleChange} />
+        <div className="form-group">
+          <label>Adresa</label>
+          <input
+            type="text"
+            name="address"
+            placeholder="Prishtinë, Kosovë"
+            value={client.address}
+            onChange={handleChange}
+          />
+        </div>
 
-      <input type="email" name="email" placeholder="Email"
-             value={client.email} onChange={handleChange} />
+        <div className="form-group">
+          <label>Telefoni</label>
+          <input
+            type="tel"
+            name="phone"
+            placeholder="+383 44 123 456"
+            value={client.phone}
+            onChange={handleChange}
+          />
+        </div>
 
-      <button type="submit">Create Client</button>
-    </form>
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="email@example.com"
+            value={client.email}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-actions">
+          <button
+            type="button"
+            className="btn-cancel"
+            onClick={() => navigate("/user/clients")}
+          >
+            Anulo
+          </button>
+
+          <button type="submit" className="btn-save" disabled={loading}>
+            {loading ? "Duke ruajtur..." : "Ruaj Klientin"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

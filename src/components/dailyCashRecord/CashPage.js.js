@@ -2,11 +2,11 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../services/auth/AuthContext";
 import {
-    closeDay,
-    getOpeningBalance,
-    getTotalDebtPaymentsToday,
-    getTotalPurchases,
-    getTotalSales,
+  closeDay,
+  getOpeningBalance,
+  getTotalDebtPaymentsToday,
+  getTotalPurchases,
+  getTotalSales,
 } from "../../services/request/dailyCashRecordService";
 
 const CashPage = () => {
@@ -99,6 +99,12 @@ const CashPage = () => {
       );
     }
   };
+  const currentCash =
+  opening +
+  sales -
+  purchases +
+  debtPayments;
+
 
   if (authLoading || loading) return <div>Loading...</div>;
   if (!user) return <div>Ju lutemi, kyçuni në sistem.</div>;
@@ -170,6 +176,15 @@ const CashPage = () => {
               {debtPayments.toFixed(2)}
             </td>
           </tr>
+          <tr style={{ background: "#e8f5e9", fontWeight: "bold" }}>
+  <td style={{ border: "1px solid #ddd", padding: "10px" }}>
+    Gjendja Tanishme e Kacës
+  </td>
+  <td style={{ border: "1px solid #ddd", padding: "10px", color: "green" }}>
+    {currentCash.toFixed(2)}
+  </td>
+</tr>
+
         </tbody>
       </table>
 
