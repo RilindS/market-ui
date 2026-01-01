@@ -17,6 +17,8 @@ import {
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { logoutUser } from "../services/request/userSessionService";
+
 import { Link, useNavigate } from "react-router-dom";
 import "./Sidebar.scss";
 
@@ -24,10 +26,17 @@ const UserSidebar = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false); // ⚠️ SHTUAR
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("authToken");
-    navigate("/login");
+ const handleLogout = async () => {
+    const userId = localStorage.getItem("userId");
+    try {
+      await logoutUser(userId);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      navigate("/login");
+    }
   };
 
   return (
