@@ -109,38 +109,26 @@ const CreateOrder = () => {
   playSound(SOUND_SUCCESS);
 };
 
-
-  // PERMISUAR DECIMAL (0.400, 1.25, 2.75...)
-  // 1. Ndrysho funksionin updateQuantity
 const updateQuantity = (id, inputValue) => {
-  // Siguro që inputValue të jetë string
   const inputStr = inputValue.toString();
 
   if (inputStr === "") {
-    // Lejo input bosh
     setItems((prev) =>
       prev.map((i) => (i.id === id ? { ...i, quantity: "" } : i))
     );
     return;
   }
 
-  // Zëvendëso presjen me pikë
+  
   const sanitized = inputStr.replace(",", ".");
   const q = parseFloat(sanitized);
 
   if (isNaN(q)) return;
 
-  if (q <= 0) {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-  } else {
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity: q } : i))
-    );
-  }
+  setItems((prev) =>
+    prev.map((i) => (i.id === id ? { ...i, quantity: q } : i))
+  );
 };
-
-
-
 
   const removeItem = (id) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
@@ -337,7 +325,7 @@ const updateQuantity = (id, inputValue) => {
           {items.map((item) => (
             <tr key={item.id}>
               <td><strong>{item.name}</strong></td>
-              <td>{item.price.toFixed(3)} €</td>
+          <td>{item.price != null ? item.price.toFixed(3) : "0.000"} €</td>
 
               <td>
            <input
@@ -352,10 +340,10 @@ const updateQuantity = (id, inputValue) => {
               </td>
 
               <td>
-  <strong>
-    {roundPrice(item.price * item.quantity).toFixed(2)} €
-  </strong>
-</td>
+                <strong>
+                  {roundPrice(item.price * item.quantity).toFixed(2)} €
+                </strong>
+              </td>
 
 
               <td>
@@ -402,7 +390,9 @@ const updateQuantity = (id, inputValue) => {
                       }}
                     >
                       <span>{product.name}</span>
-                      <strong>{product.price.toFixed(3)} €</strong>
+                <strong>
+                  {product.price != null ? product.price.toFixed(3) : "0.000"} €
+                </strong>
                     </div>
                   ))}
                 </div>
