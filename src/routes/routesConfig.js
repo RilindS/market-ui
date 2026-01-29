@@ -12,11 +12,13 @@ import OrderDetailsPage from "../components/order/OrderDetailsPage";
 import ReportsPage from "../components/order/ReportsPage";
 import CreateProductPage from "../components/product/CreateProductPage";
 import ProductListPage from "../components/product/ProductListPage";
+import ProductSalesHistory from "../components/product/ProductSalesHistory.jsx";
 import ProductStats from "../components/product/ProductStats.jsx";
 import CreateSupplier from "../components/supplier/CreateSupplier";
 import EditSupplier from "../components/supplier/EditSupplier";
 import SupplierList from "../components/supplier/SupplierList";
 import SupplierProducts from "../components/supplier/SupplierProducts";
+import MyProfile from "../components/userSession/MyProfile.jsx";
 import UserWorkTime from "../components/userSession/MyWorkTime";
 import UserWorkOverview from "../components/userSession/UserWorkOverview";
 
@@ -48,7 +50,11 @@ export const AdminRoutes = [
      { path: "/debt-managment", element: <DebtManagement /> },
      { path: "/product-stats", element: <ProductStats /> },
         //{ path: "/product-stats", element: <ProductStats /> },
-        { path: "/cash-record", element: <CashRecordsPage /> },
+    { path: "/cash-record", element: <CashRecordsPage /> },
+    { path: "/product-sales-history", element: <ProductSalesHistory /> },
+    { path: "/my-profile", element: <MyProfile /> },
+
+
 
 
 
@@ -84,6 +90,8 @@ export const UserRoutes = [
      { path: "/product-stats", element: <ProductStats /> },
         //{ path: "/product-stats", element: <ProductStats /> },
     { path: "/cash-record", element: <CashRecordsPage /> },
+    { path: "/product-sales-history", element: <ProductSalesHistory /> },
+    { path: "/my-profile", element: <MyProfile /> },
 
 
 ];

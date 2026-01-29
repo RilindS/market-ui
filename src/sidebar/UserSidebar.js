@@ -3,6 +3,7 @@ import {
   faBox,
   faCalendarCheck,
   faCartPlus,
+  faChartBar,
   faChartLine,
   faClock,
   faFileInvoiceDollar,
@@ -11,9 +12,11 @@ import {
   faShoppingBag,
   faSignOutAlt,
   faTruck,
+  faUserCircle,
   faUserFriends,
   faWarehouse
 } from "@fortawesome/free-solid-svg-icons";
+
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -33,7 +36,7 @@ const UserSidebar = () => {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      localStorage.removeItem("token");
+      localStorage.removeItem("authToken");
       localStorage.removeItem("userId");
       navigate("/login");
     }
@@ -63,6 +66,19 @@ const UserSidebar = () => {
               {!collapsed && " Manage Products"}
             </Link>
           </li>
+           <li>
+            <Link to="/user/invoice/create">
+              <FontAwesomeIcon icon={faFileInvoiceDollar} />
+              {!collapsed && " Regjistro Fature"}
+            </Link>
+          </li>
+          
+          <li>
+            <Link to="/user/purchase/summary">
+             <FontAwesomeIcon icon={faShoppingBag} />
+              {!collapsed && " Shiko Blerjet"}
+            </Link>
+          </li>
 
           <li>
             <Link to="/user/suppliers">
@@ -70,7 +86,6 @@ const UserSidebar = () => {
               {!collapsed && " Furnizuesit"}
             </Link>
           </li>
-
 
           <li>
             <Link to="/user/my-work-times">
@@ -84,20 +99,7 @@ const UserSidebar = () => {
               {!collapsed && " Detajet e Shitjeve"}
             </Link>
           </li>
-          <li>
-            <Link to="/user/invoice/create">
-              <FontAwesomeIcon icon={faFileInvoiceDollar} />
-              {!collapsed && " Regjistro Fature"}
-            </Link>
-          </li>
-
-          <li>
-            <Link to="/user/purchase/summary">
-              <FontAwesomeIcon icon={faShoppingBag} />
-              {!collapsed && " Shiko Blerjet"}
-            </Link>
-          </li>
-
+      
           <li>
             <Link to="/user/debt-managment">
               <FontAwesomeIcon icon={faMoneyBillWave} />
@@ -133,6 +135,19 @@ const UserSidebar = () => {
             </Link>
           </li>
 
+         <li>
+          <Link to="/user/product-sales-history">
+            <FontAwesomeIcon icon={faChartBar} />
+            {!collapsed && "Shitjet e Produkteve"}
+          </Link>
+        </li>
+
+        <li>
+          <Link to="/user/my-profile">
+            <FontAwesomeIcon icon={faUserCircle} />
+            {!collapsed && " Profili Im"}
+          </Link>
+        </li>
           <li>
             <Link to="#" onClick={handleLogout}>
               <FontAwesomeIcon icon={faSignOutAlt} />

@@ -3,6 +3,7 @@ import {
   faBox,
   faCalendarCheck,
   faCartPlus,
+  faChartBar,
   faChartLine,
   faClock,
   faFileInvoiceDollar,
@@ -11,10 +12,12 @@ import {
   faShoppingBag,
   faSignOutAlt,
   faTruck,
+  faUserCircle,
   faUserFriends,
   faUsers,
   faWarehouse
 } from "@fortawesome/free-solid-svg-icons";
+
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -33,7 +36,7 @@ const AdminSidebar = () => {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      localStorage.removeItem("token");
+      localStorage.removeItem("authToken");
       localStorage.removeItem("userId");
       navigate("/login");
     }
@@ -117,6 +120,14 @@ const AdminSidebar = () => {
               {!collapsed && " Historia e Produkteve"}
             </Link>
           </li>
+
+         <li>
+          <Link to="/admin/product-sales-history">
+            <FontAwesomeIcon icon={faChartBar} />
+            {!collapsed && "Shitjet e Produkteve"}
+          </Link>
+        </li>
+
           <li>
             <Link to="/admin/my-work-times">
               <FontAwesomeIcon icon={faClock} />
@@ -130,7 +141,12 @@ const AdminSidebar = () => {
               {!collapsed && " Oret e userave tjere"}
             </Link>
           </li>
-       
+        <li>
+            <Link to="/admin/supplier-history">
+              <FontAwesomeIcon icon={faBox} />
+              {!collapsed && "shiko detajet e furnitorve"}
+            </Link>
+          </li>
           <li>
             <Link to="/admin/cash-record">
               <FontAwesomeIcon icon={faChartLine} />
@@ -143,6 +159,13 @@ const AdminSidebar = () => {
               {!collapsed && " Përfundo Ditën"}
             </Link>
           </li>
+           <li>
+            <Link to="/admin/my-profile">
+              <FontAwesomeIcon icon={faUserCircle} />
+              {!collapsed && " Profili Im"}
+            </Link>
+          </li>
+
              <li>
             <Link to="#" onClick={handleLogout}>
               <FontAwesomeIcon icon={faSignOutAlt} />

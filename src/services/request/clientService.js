@@ -51,6 +51,22 @@ export const getTotalDebts = async () => {
   }
 };
 
+export const getClientUnpaidOrders = async (clientId, page = 0, size = 10) => {
+  try {
+    const response = await api.get(`/order/${clientId}/unpaid-orders`, {
+      params: {
+        page,
+        size,
+        // sort: 'orderDate,desc'   // opsionale - mund ta shtosh nëse dëshiron
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Gabim gjatë marrjes së porosive të papaguara:", error);
+    throw error;
+  }
+};
+
 export const createClient = (data) =>
   api.post("/clients", data).then((res) => res.data);
 

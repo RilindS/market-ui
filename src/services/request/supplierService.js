@@ -65,3 +65,15 @@ export const deleteSupplier = async (id) => {
     throw error;
   }
 };
+
+export const getSupplierReport = async (supplierId, params = {}) => {
+  try {
+    const response = await api.get(`/supplier/${supplierId}`, {
+      params: params,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching supplier report:", error);
+    throw error;
+  }
+};
