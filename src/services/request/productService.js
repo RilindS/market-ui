@@ -97,3 +97,8 @@ export const getStockValue = async () => {
     throw error;
   }
 };
+
+export const getProductSalesHistory = async (productId) => {
+  const response = await api.get(`/product/${productId}/sales-history`);
+  return response.data;
+};

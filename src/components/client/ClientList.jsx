@@ -1,13 +1,14 @@
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/axios";
 import {
   getAllClients,
   getClientDebt1,
-  getClientPayments
+  getClientPayments,
+  getClientUnpaidOrders,
 } from "../../services/request/clientService";
-import "./Client.scss";
-
+import styles from "./Client.module.scss";
 
 const ClientList = () => {
   const navigate = useNavigate();
@@ -20,6 +21,12 @@ const ClientList = () => {
   const [totalPaid, setTotalPaid] = useState(0);
   const [payments, setPayments] = useState([]);
 
+  const [showPayments, setShowPayments] = useState(false);
+  const [showUnpaidOrders, setShowUnpaidOrders] = useState(false);
+  const [unpaidOrdersData, setUnpaidOrdersData] = useState(null);
+  const [unpaidPage, setUnpaidPage] = useState(0);
+  const [unpaidLoading, setUnpaidLoading] = useState(false);
+
   const [notification, setNotification] = useState(null);
 
   // Pay debt modal
@@ -31,13 +38,11 @@ const ClientList = () => {
   const [showManualDebtModal, setShowManualDebtModal] = useState(false);
   const [manualDebtAmount, setManualDebtAmount] = useState("");
 
-  /* ================== NOTIFICATIONS ================== */
   const showNotification = (type, message) => {
     setNotification({ type, message });
     setTimeout(() => setNotification(null), 3000);
   };
 
-  /* ================== FETCH CLIENTS ================== */
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchClients(search);
@@ -55,20 +60,6 @@ const ClientList = () => {
     }
   };
 
-  /* ================== CLIENT ACTIONS ================== */
-  // const handleDelete = async (id) => {
-  //   if (window.confirm("A jeni të sigurt që doni të fshini këtë klient?")) {
-  //     try {
-  //       await deleteClient(id);
-  //       fetchClients(search);
-  //       showNotification("success", "Klienti u fshi me sukses!");
-  //     } catch (error) {
-  //       console.error("Gabim gjatë fshirjes:", error);
-  //       showNotification("error", "Gabim gjatë fshirjes së klientit");
-  //     }
-  //   }
-  // };
-
   const handleSelectClient = async (client) => {
     try {
       const debtData = await getClientDebt1(client.id);
@@ -79,6 +70,12 @@ const ClientList = () => {
       setTotalPaid(debtData.totalPaid || 0);
       setClientDebt(debtData.remainingDebt || 0);
       setPayments(paymentsData.payments || []);
+
+      // Reset sections
+      setShowPayments(false);
+      setShowUnpaidOrders(false);
+      setUnpaidOrdersData(null);
+      setUnpaidPage(0);
     } catch (error) {
       console.error("Gabim gjatë ngarkimit të detajeve:", error);
       showNotification("error", "Gabim gjatë ngarkimit të detajeve të klientit");
@@ -93,9 +90,34 @@ const ClientList = () => {
     setPayments([]);
     setShowPayModal(false);
     setShowManualDebtModal(false);
+    setShowPayments(false);
+    setShowUnpaidOrders(false);
+    setUnpaidOrdersData(null);
+    setUnpaidPage(0);
   };
 
-  /* ================== PAY DEBT ================== */
+  const loadUnpaidOrders = async (page = 0) => {
+    if (!selectedClient?.id) return;
+
+    setUnpaidLoading(true);
+    try {
+      const data = await getClientUnpaidOrders(selectedClient.id, page);
+      setUnpaidOrdersData(data);
+      setUnpaidPage(page);
+    } catch (error) {
+      showNotification("error", "Gabim gjatë ngarkimit të porosive të papaguara");
+    } finally {
+      setUnpaidLoading(false);
+    }
+  };
+
+  const handleShowUnpaidOrders = () => {
+    setShowUnpaidOrders(true);
+    if (!unpaidOrdersData) {
+      loadUnpaidOrders(0);
+    }
+  };
+
   const handlePayDebt = async () => {
     if (!payAmount || parseFloat(payAmount) <= 0) return;
 
@@ -118,7 +140,6 @@ const ClientList = () => {
     }
   };
 
-  /* ================== MANUAL DEBT ================== */
   const handleSetManualDebt = async () => {
     if (!manualDebtAmount || parseFloat(manualDebtAmount) <= 0) return;
 
@@ -142,63 +163,31 @@ const ClientList = () => {
     }
   };
 
-  /* ================== EDIT CLIENT ================== */
- const handleEditClient = (client) => {
-  navigate(`edit-client/${client.id}`);
-};
-
+  const handleEditClient = (client) => {
+    navigate(`edit-client/${client.id}`);
+  };
 
   return (
-    <div className="client-container">
-      <h2>Clients List</h2>
-
-      {notification && (
-        <div className={`notification ${notification.type}`}>
-          {notification.type === "success" ? "✓" : "✕"} {notification.message}
-        </div>
-      )}
-<div
-  style={{
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "15px",
-  }}
->
-  <h2 style={{ margin: 0 }}>Clients List</h2>
-
-<button
-  onClick={() => navigate("create-client")}
-  style={{
-    padding: "10px 15px",
-    backgroundColor: "#4caf50",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    fontWeight: "bold",
-  }}
->
-  + Shto Klient
-</button>
-
-</div>
+    <div className={styles.clientContainer}>
+      <div className={styles.header}>
+        <h2>Clients List</h2>
+        <button
+          onClick={() => navigate("create-client")}
+          className={styles.addButton}
+        >
+          + Shto Klient
+        </button>
+      </div>
 
       <input
         type="text"
         placeholder="Kërko klient (emër, telefon, email)..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginBottom: "15px",
-          border: "1px solid #ccc",
-          borderRadius: "5px",
-        }}
+        className={styles.searchInput}
       />
 
-      <table>
+      <table className={styles.clientTable}>
         <thead>
           <tr>
             <th>Emri</th>
@@ -215,182 +204,205 @@ const ClientList = () => {
               <td>{cli.address}</td>
               <td>{cli.phone}</td>
               <td>{cli.email}</td>
-              <td style={{ display: "flex", gap: "6px" }}>
-                <button
-                  onClick={() => handleSelectClient(cli)}
-                  style={{
-                    padding: "5px 10px",
-                    backgroundColor: "#2196f3",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "3px",
-                  }}
-                >
-                  Shiko Detaje
-                </button>
-
-                
-                <button
-                  onClick={() => handleEditClient(cli)}
-                  style={{
-                    padding: "5px 10px",
-                    backgroundColor: "#ffc107",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "3px",
-                  }}
-                >
-                  Edit
-                </button>
-                {/* <button
-                  className="delete-btn"
-                  onClick={() => handleDelete(cli.id)}
-                >
-                  Delete
-                </button> */}
+              <td>
+                <div className={styles.actionCell}>
+                  <button
+                    onClick={() => handleSelectClient(cli)}
+                    className={styles.detailBtn}
+                  >
+                    Shiko Detaje
+                  </button>
+                  <button
+                    onClick={() => handleEditClient(cli)}
+                    className={styles.editBtn}
+                  >
+                    Edit
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* ================== CLIENT DETAILS ================== */}
       {selectedClient && (
-        <div
-          style={{
-            marginTop: "30px",
-            padding: "20px",
-            backgroundColor: "#f9f9f9",
-            borderRadius: "5px",
-          }}
-        >
+        <div className={styles.detailsSection}>
           <h3>Detajet për klientin {selectedClient.name}</h3>
-          <div style={{ marginBottom: "10px" }}>
-            <strong>Borxhi Total i Papaguar:</strong>{" "}
-            <span style={{ color: "orange" }}>{totalUnpaid.toFixed(2)} €</span>
-          </div>
-          <div style={{ marginBottom: "10px" }}>
-            <strong>Total i Paguar:</strong> {totalPaid.toFixed(2)} €
-          </div>
-          <div
-            style={{
-              marginBottom: "20px",
-              fontSize: "20px",
-              fontWeight: "bold",
-            }}
-          >
-            <strong>Borxhi i Mbetur:</strong>{" "}
-            <span style={{ color: "red", fontSize: "22px" }}>
-              {clientDebt.toFixed(2)} €
-            </span>
+
+          <div className={styles.summary}>
+             <div className={styles.remainingDebt}>
+              <strong>Borxhi i Mbetur:</strong>{" "}
+              <span>{clientDebt.toFixed(2)} €</span>
+            </div>
+            {/* <div>
+              <strong>Borxhi Total i Papaguar:</strong>{" "}
+              <span className={styles.unpaid}>{totalUnpaid.toFixed(2)} €</span>
+            </div> */}
+            <div>
+              <strong>Total i Paguar:</strong> {totalPaid.toFixed(2)} €
+            </div>
+           
           </div>
 
-          <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+          <div className={styles.actionButtons}>
             <button
               onClick={() => setShowPayModal(true)}
               disabled={clientDebt <= 0}
-              style={{
-                padding: "10px 15px",
-                backgroundColor: clientDebt > 0 ? "#4caf50" : "#ccc",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: clientDebt > 0 ? "pointer" : "not-allowed",
-              }}
+              className={`${styles.actionBtn} ${styles.payBtn} ${
+                clientDebt <= 0 ? styles.disabled : ""
+              }`}
             >
-              Paguaj Borgj
+              Paguaj Borxh
             </button>
+
             <button
               onClick={() => setShowManualDebtModal(true)}
-              style={{
-                padding: "10px 15px",
-                backgroundColor: "#ff9800",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-              }}
+              className={`${styles.actionBtn} ${styles.manualBtn}`}
             >
-              Vendos Borgj Manualisht
+              Vendos Borxh Manualisht
             </button>
+
+            <button
+              onClick={() => setShowPayments((prev) => !prev)}
+              className={`${styles.actionBtn} ${styles.paymentsBtn}`}
+            >
+              {showPayments ? "Fshih pagesat" : "Shiko pagesat"}
+            </button>
+
+            <button
+              onClick={handleShowUnpaidOrders}
+              className={`${styles.actionBtn} ${styles.unpaidOrdersBtn}`}
+            >
+              Shiko porositë e papaguara
+            </button>
+
             <button
               onClick={clearSelection}
-              style={{
-                padding: "10px 15px",
-                backgroundColor: "#f44336",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-              }}
+              className={`${styles.actionBtn} ${styles.closeBtn}`}
             >
               Mbyll Detajet
             </button>
           </div>
 
-          {payments.length > 0 ? (
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr style={{ backgroundColor: "#f2f2f2" }}>
-                  <th style={{ padding: "10px", border: "1px solid #ddd" }}>
-                    Data
-                  </th>
-                  <th style={{ padding: "10px", border: "1px solid #ddd" }}>
-                    Shuma (€)
-                  </th>
-                  <th style={{ padding: "10px", border: "1px solid #ddd" }}>
-                    Metoda
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {payments.map((p) => (
-                  <tr key={p.id}>
-                    <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                      {new Date(p.paymentDate).toLocaleDateString("en-GB")}
-                    </td>
-                    <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                      {p.amount.toFixed(2)}
-                    </td>
-                    <td style={{ padding: "10px", border: "1px solid #ddd" }}>
-                      {p.method || "N/A"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p style={{ color: "#999" }}>Nuk ka pagesa ende.</p>
+          {showPayments && (
+            <div className={styles.paymentsSection}>
+              <h4>Historiku i pagesave</h4>
+              {payments.length > 0 ? (
+                <table className={styles.paymentsTable}>
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Shuma (€)</th>
+                      <th>Metoda</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payments.map((p) => (
+                      <tr key={p.id}>
+                        <td>{new Date(p.paymentDate).toLocaleDateString("sq-AL")}</td>
+                        <td>{p.amount?.toFixed(2) || "—"}</td>
+                        <td>{p.method || p.paymentMethod || "N/A"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className={styles.noData}>Nuk ka pagesa të regjistruara ende.</p>
+              )}
+            </div>
+          )}
+
+          {showUnpaidOrders && (
+            <div className={styles.unpaidOrdersSection}>
+              <h4>Porositë e papaguara</h4>
+
+              {unpaidLoading ? (
+                <p className={styles.loading}>Po ngarkohen...</p>
+              ) : !unpaidOrdersData || !unpaidOrdersData.unpaidOrders?.length ? (
+                <p className={styles.noData}>Nuk ka porosi të papaguara.</p>
+              ) : (
+                <>
+                  <div className={styles.currentDebt}>
+                    Borxhi aktual: {unpaidOrdersData.currentDebt?.toFixed(2) || "—"} €
+                  </div>
+
+                  {unpaidOrdersData.unpaidOrders.map((order) => (
+                    <div key={order.orderId} className={styles.orderCard}>
+                      <div className={styles.orderHeader}>
+                        <span>Porosi #{order.orderId}</span>
+                        <span>
+                          {order.orderDate
+                            ? format(new Date(order.orderDate), "dd.MM.yyyy HH:mm")
+                            : "—"}
+                        </span>
+                      </div>
+
+                      <div className={styles.orderTotal}>
+                        Totali: {order.totalAmount?.toFixed(2) || "—"} €
+                      </div>
+
+                      <table className={styles.orderItemsTable}>
+                        <thead>
+                          <tr>
+                            <th>Produkti</th>
+                            <th className={styles.right}>Sasia</th>
+                            <th className={styles.right}>Çmimi njësor</th>
+                            <th className={styles.right}>Totali</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {order.items?.map((item, idx) => (
+                            <tr key={idx}>
+                              <td>{item.productName}</td>
+                              <td className={styles.right}>{item.quantity}</td>
+                              <td className={styles.right}>
+                                {item.unitPrice?.toFixed(2) || item.price?.toFixed(2)} €
+                              </td>
+                              <td className={styles.right}>
+                                {item.totalPrice?.toFixed(2) || "—"} €
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ))}
+
+                  {unpaidOrdersData.totalPages > 1 && (
+                    <div className={styles.pagination}>
+                      <button
+                        onClick={() => loadUnpaidOrders(unpaidPage - 1)}
+                        disabled={unpaidPage === 0 || unpaidLoading}
+                      >
+                        ← Back
+                      </button>
+                      <span>
+                        Faqja {unpaidPage + 1} / {unpaidOrdersData.totalPages}
+                      </span>
+                      <button
+                        onClick={() => loadUnpaidOrders(unpaidPage + 1)}
+                        disabled={!unpaidOrdersData.hasNext || unpaidLoading}
+                      >
+                        Next →
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           )}
         </div>
       )}
 
-      {/* ================== PAY DEBT MODAL ================== */}
+      {/* Pay modal */}
       {showPayModal && selectedClient && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              background: "white",
-              padding: "20px",
-              borderRadius: "10px",
-              width: "300px",
-            }}
-          >
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
             <h4>Paguaj për {selectedClient.name}</h4>
-            <p style={{ color: "red", marginBottom: "10px" }}>
+            <p className={styles.modalWarning}>
               Borxhi i mbetur: {clientDebt.toFixed(2)} €
             </p>
+
             <input
               type="number"
               placeholder="Shuma (€)"
@@ -399,55 +411,30 @@ const ClientList = () => {
               step="0.01"
               min="0.01"
               max={clientDebt}
-              style={{
-                width: "100%",
-                padding: "10px",
-                marginBottom: "10px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-              }}
+              className={styles.modalInput}
             />
+
             <select
               value={payMethod}
               onChange={(e) => setPayMethod(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px",
-                marginBottom: "20px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-              }}
+              className={styles.modalSelect}
             >
               <option value="CASH">Cash</option>
               <option value="CARD">Kartë</option>
               <option value="TRANSFER">Transfertë</option>
             </select>
-            <div style={{ display: "flex", gap: "10px" }}>
+
+            <div className={styles.modalButtons}>
               <button
                 onClick={() => setShowPayModal(false)}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  backgroundColor: "#f44336",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                }}
+                className={styles.modalCancel}
               >
                 Anulo
               </button>
               <button
                 onClick={handlePayDebt}
                 disabled={!payAmount || parseFloat(payAmount) <= 0}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  backgroundColor:
-                    !payAmount || parseFloat(payAmount) <= 0 ? "#ccc" : "#4caf50",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                }}
+                className={styles.modalConfirm}
               >
                 Paguaj
               </button>
@@ -456,79 +443,44 @@ const ClientList = () => {
         </div>
       )}
 
-      {/* ================== MANUAL DEBT MODAL ================== */}
+      {/* Manual debt modal */}
       {showManualDebtModal && selectedClient && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              background: "white",
-              padding: "20px",
-              borderRadius: "10px",
-              width: "300px",
-            }}
-          >
-            <h4>Vendos Borgj Manualisht</h4>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h4>Vendos Borxh Manualisht</h4>
+
             <input
               type="number"
               placeholder="Shuma (€)"
               value={manualDebtAmount}
               onChange={(e) => setManualDebtAmount(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px",
-                marginBottom: "20px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-              }}
+              step="0.01"
+              min="0.01"
+              className={styles.modalInput}
             />
-            <div style={{ display: "flex", gap: "10px" }}>
+
+            <div className={styles.modalButtons}>
               <button
                 onClick={() => setShowManualDebtModal(false)}
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  backgroundColor: "#f44336",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                }}
+                className={styles.modalCancel}
               >
                 Anulo
               </button>
               <button
                 onClick={handleSetManualDebt}
-                disabled={
-                  !manualDebtAmount || parseFloat(manualDebtAmount) <= 0
-                }
-                style={{
-                  flex: 1,
-                  padding: "10px",
-                  backgroundColor:
-                    !manualDebtAmount || parseFloat(manualDebtAmount) <= 0
-                      ? "#ccc"
-                      : "#ff9800",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                }}
+                disabled={!manualDebtAmount || parseFloat(manualDebtAmount) <= 0}
+                className={styles.modalConfirm}
               >
                 Ruaj
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {notification && (
+        <div className={`${styles.notification} ${styles[notification.type]}`}>
+          {notification.message}
         </div>
       )}
     </div>
