@@ -10,17 +10,16 @@ const MyProfile = () => {
   const getRoleDisplay = (role) => {
     if (!role) return "Pa rol";
 
-    // Nëse backend dërgon ARRAY rolesh
+    
     if (Array.isArray(role)) {
       return role.map((r) => r.name).join(", ");
     }
 
-    // Nëse dërgon vetëm 1 objekt role
     if (typeof role === "object") {
       return role.name;
     }
 
-    return role; // nëse vjen si string
+    return role; 
   };
 
   return (

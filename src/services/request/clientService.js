@@ -57,7 +57,7 @@ export const getClientUnpaidOrders = async (clientId, page = 0, size = 10) => {
       params: {
         page,
         size,
-        // sort: 'orderDate,desc'   // opsionale - mund ta shtosh nëse dëshiron
+        // sort: 'orderDate,desc'   // opsional
       },
     });
     return response.data;

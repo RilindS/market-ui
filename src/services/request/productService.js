@@ -98,8 +98,6 @@ export const getStockValue = async () => {
   }
 };
 
-// src/services/request/orderService.js
-
 export const getProductSalesHistory = async (productId) => {
   const response = await api.get(`/product/${productId}/sales-history`);
   return response.data;

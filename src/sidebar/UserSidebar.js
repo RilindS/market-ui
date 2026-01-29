@@ -27,7 +27,7 @@ import "./Sidebar.scss";
 
 const UserSidebar = () => {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false); // ⚠️ SHTUAR
+  const [collapsed, setCollapsed] = useState(false); 
 
  const handleLogout = async () => {
     const userId = localStorage.getItem("userId");
