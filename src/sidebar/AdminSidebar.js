@@ -127,7 +127,7 @@ const AdminSidebar = () => {
             {!collapsed && "Shitjet e Produkteve"}
           </Link>
         </li>
-
+{/* 
           <li>
             <Link to="/admin/my-work-times">
               <FontAwesomeIcon icon={faClock} />
@@ -140,13 +140,13 @@ const AdminSidebar = () => {
               <FontAwesomeIcon icon={faUsers} />
               {!collapsed && " Oret e userave tjere"}
             </Link>
-          </li>
-        <li>
+          </li> */}
+        {/* <li>
             <Link to="/admin/supplier-history">
               <FontAwesomeIcon icon={faBox} />
               {!collapsed && "shiko detajet e furnitorve"}
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/admin/cash-record">
               <FontAwesomeIcon icon={faChartLine} />
