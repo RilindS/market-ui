@@ -8,6 +8,7 @@ import CreatePurchaseInvoice from "../components/invoice/CreatePurchaseInvoice";
 import ProductPurchaseHistory from "../components/invoice/ProductPurchaseHistory";
 import PurchaseSummary from "../components/invoice/PurchaseSummary";
 import CreateOrder from "../components/order/CreateOrder";
+import DebtOrdersByDate from "../components/order/DebtOrdersByDate.jsx";
 import OrderDetailsPage from "../components/order/OrderDetailsPage";
 import ReportsPage from "../components/order/ReportsPage";
 import CreateProductPage from "../components/product/CreateProductPage";
@@ -53,6 +54,7 @@ export const AdminRoutes = [
     { path: "/cash-record", element: <CashRecordsPage /> },
     { path: "/product-sales-history", element: <ProductSalesHistory /> },
     { path: "/my-profile", element: <MyProfile /> },
+    { path: "/client-debt", element: <DebtOrdersByDate /> },
 
 
 

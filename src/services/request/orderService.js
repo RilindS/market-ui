@@ -34,3 +34,19 @@ export const getReportsByRange = async (startDate, endDate, page = 0, size = 10)
   });
   return response.data;
 };
+
+export const getDebtOrdersByDate = async (date) => {
+  const response = await api.post(`order/debt-by-date`, {
+    date: date,
+  });
+
+  return response.data;
+};
+
+export const getPaymentsByDate = async (date) => {
+  const response = await api.post(`order/payments/by-date`, {
+    date: date,
+  });
+
+  return response.data;
+};
