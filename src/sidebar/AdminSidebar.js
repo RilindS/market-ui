@@ -5,7 +5,6 @@ import {
   faCartPlus,
   faChartBar,
   faChartLine,
-  faClock,
   faFileInvoiceDollar,
   faHistory,
   faMoneyBillWave,
@@ -14,7 +13,6 @@ import {
   faTruck,
   faUserCircle,
   faUserFriends,
-  faUsers,
   faWarehouse
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -92,13 +90,13 @@ const AdminSidebar = () => {
               {!collapsed && " Detajet e Shitjeve"}
             </Link>
           </li>
-
+{/* 
           <li>
             <Link to="/admin/debt-managment">
               <FontAwesomeIcon icon={faMoneyBillWave} />
               {!collapsed && " Borgjet"}
             </Link>
-          </li>
+          </li> */}
 
           <li>
             <Link to="/admin/clients">
@@ -147,7 +145,12 @@ const AdminSidebar = () => {
               {!collapsed && "shiko detajet e furnitorve"}
             </Link>
           </li> */}
-          <li>
+       <li>
+            <Link to="/admin/client-debt">
+                          <FontAwesomeIcon icon={faMoneyBillWave} />
+              {!collapsed && "Borgjet dhe Pagesat"}
+            </Link>
+          </li>    <li>
             <Link to="/admin/cash-record">
               <FontAwesomeIcon icon={faChartLine} />
               {!collapsed && "Hyrjet / Dalje"}
@@ -161,10 +164,11 @@ const AdminSidebar = () => {
           </li>
            <li>
             <Link to="/admin/my-profile">
-              <FontAwesomeIcon icon={faUserCircle} />
+                <FontAwesomeIcon icon={faUserCircle} />
               {!collapsed && " Profili Im"}
             </Link>
           </li>
+         
 
              <li>
             <Link to="#" onClick={handleLogout}>

@@ -10,7 +10,7 @@ import {
 } from "../../services/request/productService";
 import "./CreateOrder.scss";
 
-// Tingujt
+
 const SOUND_SUCCESS =
   "https://assets.mixkit.co/sfx/preview/mixkit-confirmation-tone-2358.mp3";
 const SOUND_ERROR =
@@ -36,6 +36,9 @@ const CreateOrder = () => {
   const [selectedClient, setSelectedClient] = useState(null);
 
   const barcodeInputRef = useRef(null);
+
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [isCreatingCreditOrder, setIsCreatingCreditOrder] = useState(false);
 
   // Fokus fillestar te input-i barcode
   useEffect(() => {
@@ -206,11 +209,10 @@ const updateQuantity = (id, inputValue) => {
   };
 
   // Ruaj porosinë si pagesë normale (isCredit: false, pa clientId)
-  const handleCreateOrder = async () => {
-    if (items.length === 0) {
-      showNotification("error", "Shto të paktën një produkt!");
-      return;
-    }
+    const handleCreateOrder = async () => {
+    if (items.length === 0 || isCreatingOrder) return;
+
+    setIsCreatingOrder(true);
 
     try {
       await createOrder({
@@ -220,13 +222,14 @@ const updateQuantity = (id, inputValue) => {
           quantity: i.quantity,
           price: i.price,
         })),
-        // isCredit: false by default në backend
       });
 
       handleOrderSuccess();
     } catch {
       playSound(SOUND_ERROR);
       showNotification("error", "Gabim gjatë ruajtjes së porosisë");
+    } finally {
+      setIsCreatingOrder(false);
     }
   };
 
@@ -261,16 +264,15 @@ const updateQuantity = (id, inputValue) => {
   }, [clientSearch, clients]);
 
   // Ruaj porosinë si borgj (me clientId dhe isCredit: true)
-  const handleCreateCreditOrder = async () => {
-    if (!selectedClient) {
-      showNotification("error", "Zgjidh një klient!");
-      return;
-    }
+    const handleCreateCreditOrder = async () => {
+    if (!selectedClient || isCreatingCreditOrder) return;
+
+    setIsCreatingCreditOrder(true);
 
     try {
       await createOrder({
         userId: Number(user.id),
-        clientId: selectedClient.id, // Dërgo clientId vetëm këtu
+        clientId: selectedClient.id,
         isCredit: true,
         items: items.map((i) => ({
           productId: i.productId,
@@ -283,6 +285,8 @@ const updateQuantity = (id, inputValue) => {
     } catch {
       playSound(SOUND_ERROR);
       showNotification("error", "Gabim gjatë ruajtjes së porosisë në borgj");
+    } finally {
+      setIsCreatingCreditOrder(false);
     }
   };
 
@@ -433,24 +437,45 @@ const updateQuantity = (id, inputValue) => {
         )}
       </div>
 
-      <div className="order-buttons" style={{ display: "flex", gap: "10px", justifyContent: "center", marginTop: "20px" }}>
-        <button
-          onClick={handleCreateOrder}
-          disabled={items.length === 0}
-          className="complete-order-btn"
-          style={{ flex: 1, maxWidth: "200px" }}
-        >
-          Përfundo Porosinë
-        </button>
-        <button
-          onClick={handleSaveAsCredit}
-          disabled={items.length === 0}
-          className="credit-order-btn" // Shto stil në SCSS nëse do
-          style={{ flex: 1, maxWidth: "200px", marginTop:"50px",backgroundColor: "#ff9800", color: "white" }}
-        >
-          Ruaj si Borgj
-        </button>
-      </div>
+      <div
+  className="order-buttons"
+  style={{
+    display: "flex",
+    gap: "10px",
+    justifyContent: "center",
+    marginTop: "20px",
+  }}
+>
+  <button
+    onClick={handleCreateOrder}
+    disabled={items.length === 0 || isCreatingOrder}
+    className={`complete-order-btn ${isCreatingOrder ? "loading" : ""}`}
+    style={{ flex: 1, maxWidth: "200px" }}
+  >
+    {isCreatingOrder ? (
+      <>
+        <span className="spinner"></span> Duke u ruajtur...
+      </>
+    ) : (
+      "Përfundo Porosinë"
+    )}
+  </button>
+
+  <button
+    onClick={handleSaveAsCredit}
+    disabled={items.length === 0}
+    className="credit-order-btn"
+    style={{
+      flex: 1,
+      maxWidth: "200px",
+      marginTop: "50px",
+      backgroundColor: "#ff9800",
+      color: "white",
+    }}
+  >
+    Ruaj si Borgj
+  </button>
+</div>
 
       {showModal && (
         <div className="modal-overlay" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
@@ -492,12 +517,26 @@ const updateQuantity = (id, inputValue) => {
                 Anulo
               </button>
               <button
-                onClick={handleCreateCreditOrder}
-                disabled={!selectedClient}
-                style={{ flex: 1, padding: "10px", backgroundColor: selectedClient ? "#4caf50" : "#ccc", color: "white", border: "none", borderRadius: "5px" }}
-              >
-                Konfirmo Borgj
-              </button>
+  onClick={handleCreateCreditOrder}
+  disabled={!selectedClient || isCreatingCreditOrder}
+  className={isCreatingCreditOrder ? "loading" : ""}
+  style={{
+    flex: 1,
+    padding: "10px",
+    backgroundColor: selectedClient ? "#4caf50" : "#ccc",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+  }}
+>
+  {isCreatingCreditOrder ? (
+    <>
+      <span className="spinner"></span> Duke u ruajtur...
+    </>
+  ) : (
+    "Konfirmo Borgj"
+  )}
+</button>
             </div>
           </div>
         </div>
